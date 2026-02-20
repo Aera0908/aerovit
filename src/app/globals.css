@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --background: #020202;
+  --foreground: #ffffff;
+  --cyan-glow: rgba(0, 242, 255, 0.4);
+  --yellow-glow: rgba(255, 200, 0, 0.4);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-cyan-400: #00f2ff;
+  --color-cyan-500: #00d4e0;
+  --font-sans: 'Rajdhani', sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Rajdhani', sans-serif;
+}
+
+::selection {
+  background: rgba(0, 242, 255, 0.3);
+}
+
+.clip-path-polygon {
+  clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
+}
+
+.text-stroke {
+  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.8);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 15px var(--cyan-glow);
+}
+
+.glow-yellow {
+  box-shadow: 0 0 15px var(--yellow-glow);
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #020202;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #111;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00f2ff;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.7; }
+}
