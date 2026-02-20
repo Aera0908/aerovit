@@ -232,7 +232,7 @@ export default function Home() {
             <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[7rem] font-black italic uppercase tracking-tighter leading-[0.9] mb-1 text-white drop-shadow-[0_0_60px_rgba(0,238,255,0.3)]">
               Level up
             </h1>
-            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[7rem] font-black italic uppercase tracking-tighter leading-[0.9] text-transparent bg-clip-text bg-gradient-to-r from-[#00eeff] via-cyan-300 to-blue-400 pb-6 pr-4">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[7rem] font-black italic uppercase tracking-tighter leading-[0.9] text-transparent bg-clip-text bg-gradient-to-r from-[#00b8cc] via-[#0090a8] to-[#006080] pb-6 pr-4 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
               Reality
             </h1>
             <motion.div

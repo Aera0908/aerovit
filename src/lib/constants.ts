@@ -70,8 +70,8 @@ export const FEATURES = {
 };
 
 export const NAV_LINKS = [
-  { href: "#vision", label: "Pose Detection" },
-  { href: "#gamification", label: "Progression" },
-  { href: "#hardware", label: "Hardware" },
-  { href: "#web3", label: "Rewards" },
+  { href: "/features/pose-detection", label: "Pose Detection" },
+  { href: "/features/progression", label: "Progression" },
+  { href: "/features/hardware", label: "Hardware" },
+  { href: "/features/rewards", label: "Rewards" },
 ];
