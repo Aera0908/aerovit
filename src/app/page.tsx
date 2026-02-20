@@ -208,7 +208,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-[#010810]">
           <motion.div
             style={{ scale: portalScale, opacity: portalOpacity }}
-            className="absolute inset-0 flex items-center justify-center"
+            className="absolute inset-0 flex items-center justify-center z-0 pt-24"
           >
             <Portal />
           </motion.div>
@@ -220,7 +220,7 @@ export default function Home() {
 
           <motion.div
             style={{ opacity: heroTextOpacity, scale: heroTextScale }}
-            className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none px-4"
+            className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none px-4 z-10"
           >
             <motion.p
               animate={{ opacity: [0.4, 1, 0.4] }}
@@ -232,7 +232,7 @@ export default function Home() {
             <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[7rem] font-black italic uppercase tracking-tighter leading-[0.9] mb-1 text-white drop-shadow-[0_0_60px_rgba(0,238,255,0.3)]">
               Level up
             </h1>
-            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[7rem] font-black italic uppercase tracking-tighter leading-[0.9] text-transparent bg-clip-text bg-gradient-to-r from-[#00eeff] via-cyan-300 to-blue-400 pb-2">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[7rem] font-black italic uppercase tracking-tighter leading-[0.9] text-transparent bg-clip-text bg-gradient-to-r from-[#00eeff] via-cyan-300 to-blue-400 pb-6 pr-4">
               Reality
             </h1>
             <motion.div
