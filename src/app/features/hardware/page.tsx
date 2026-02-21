@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Cpu, Activity, Gauge, Wifi, Battery, Monitor, Vibrate, ArrowLeft, CheckCircle, Clock } from 'lucide-react';
+import { Cpu, Activity, Gauge, Wifi, Battery, Monitor, Vibrate, ArrowLeft, CheckCircle, Clock, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { Navbar } from '@/components/layout';
 
@@ -174,6 +174,13 @@ export default function HardwarePage() {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
+              {
+                icon: Shield,
+                title: 'Hardware Wallet Ledger',
+                desc: 'Secure on-device key storage turns your watch into a crypto hardware wallet for signing AERO transactions.',
+                status: 'Planned',
+                statusColor: 'text-yellow-400 bg-yellow-500/10',
+              },
               {
                 icon: Gauge,
                 title: 'IMU Form Validation',

@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Trophy, Coins, Wallet, Award, Gift, TrendingUp, ArrowLeft, Clock, Link as LinkIcon } from 'lucide-react';
+import { Trophy, Coins, Wallet, Award, Gift, TrendingUp, ArrowLeft, Clock, Link as LinkIcon, Watch, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { Navbar } from '@/components/layout';
 
@@ -193,20 +193,21 @@ export default function RewardsPage() {
               <h3 className="text-xl font-bold text-white mb-6">Supported Wallets</h3>
               <div className="space-y-4">
                 {[
-                  { name: 'MetaMask', status: 'Primary', desc: 'Browser extension wallet' },
-                  { name: 'WalletConnect', status: 'Supported', desc: 'Mobile wallet connection' },
-                  { name: 'Trust Wallet', status: 'Supported', desc: 'Mobile crypto wallet' },
-                  { name: 'Coinbase Wallet', status: 'Supported', desc: 'Coinbase integration' },
+                  { name: 'Aerovit Watch', status: 'Planned', desc: 'Hardware wallet ledger on your wrist', icon: Watch, highlight: true },
+                  { name: 'MetaMask', status: 'Primary', desc: 'Browser extension wallet', icon: Wallet, highlight: false },
+                  { name: 'WalletConnect', status: 'Supported', desc: 'Mobile wallet connection', icon: Wallet, highlight: false },
+                  { name: 'Trust Wallet', status: 'Supported', desc: 'Mobile crypto wallet', icon: Wallet, highlight: false },
+                  { name: 'Coinbase Wallet', status: 'Supported', desc: 'Coinbase integration', icon: Wallet, highlight: false },
                 ].map((wallet) => (
-                  <div key={wallet.name} className="flex items-center justify-between p-4 bg-white/5 border border-white/10">
+                  <div key={wallet.name} className={`flex items-center justify-between p-4 bg-white/5 border ${wallet.highlight ? 'border-yellow-500/50' : 'border-white/10'}`}>
                     <div className="flex items-center gap-3">
-                      <Wallet className="w-6 h-6 text-[#00eeff]" />
+                      <wallet.icon className={`w-6 h-6 ${wallet.highlight ? 'text-yellow-400' : 'text-[#00eeff]'}`} />
                       <div>
                         <p className="text-white font-medium">{wallet.name}</p>
                         <p className="text-gray-500 text-xs">{wallet.desc}</p>
                       </div>
                     </div>
-                    <span className="text-[#00eeff] text-sm">{wallet.status}</span>
+                    <span className={`text-sm ${wallet.highlight ? 'text-yellow-400' : 'text-[#00eeff]'}`}>{wallet.status}</span>
                   </div>
                 ))}
               </div>
@@ -232,8 +233,44 @@ export default function RewardsPage() {
         </div>
       </section>
 
-      {/* Architecture */}
+      {/* Hardware Wallet Ledger */}
       <section className="py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="p-8 bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/30 rounded-lg">
+            <div className="flex items-start gap-6 flex-wrap md:flex-nowrap">
+              <div className="w-20 h-20 bg-yellow-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Shield className="w-10 h-10 text-yellow-400" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-3">
+                  <h2 className="text-2xl font-black text-white">Watch as Hardware Wallet</h2>
+                  <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-xs rounded">Planned</span>
+                </div>
+                <p className="text-gray-300 mb-6 leading-relaxed">
+                  Your Aerovit smartwatch will double as a secure hardware wallet ledger. Store your private keys 
+                  directly on the watch&apos;s secure element, sign transactions with a physical button press, and 
+                  never expose your keys to potentially compromised phones or computers.
+                </p>
+                <div className="grid sm:grid-cols-3 gap-4">
+                  {[
+                    { title: 'Secure Storage', desc: 'Private keys stored in ESP32-S3 secure flash' },
+                    { title: 'Physical Auth', desc: 'Confirm transactions with button press' },
+                    { title: 'Air-Gapped Option', desc: 'Sign offline, broadcast via phone' },
+                  ].map((feature) => (
+                    <div key={feature.title} className="p-3 bg-black/30 border border-white/10">
+                      <p className="text-yellow-400 font-bold text-sm mb-1">{feature.title}</p>
+                      <p className="text-gray-500 text-xs">{feature.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Architecture */}
+      <section className="py-20 px-6 bg-white/[0.02]">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-black text-white mb-8">System Architecture</h2>
           

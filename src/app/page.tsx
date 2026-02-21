@@ -20,7 +20,7 @@ function TwitterIcon({ className }: { className?: string }) {
   );
 }
 import { Navbar } from '@/components/layout';
-import { SystemNotification } from '@/components/ui';
+import { SystemNotification, Portal3D } from '@/components/ui';
 
 // Content panels positioned in 3D space (z depth, x offset, y offset)
 const PANELS = [
@@ -229,10 +229,16 @@ export default function Home() {
             >
               Gamified AI Fitness Platform
             </motion.p>
-            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[7rem] font-black italic uppercase tracking-tighter leading-[0.9] mb-1 text-white drop-shadow-[0_0_60px_rgba(0,238,255,0.3)]">
+            <h1 
+              className="text-4xl sm:text-5xl md:text-7xl lg:text-[7rem] font-black italic uppercase tracking-tighter leading-[0.9] mb-1 text-white"
+              style={{ filter: 'drop-shadow(1px 1px 0px rgba(0,0,0,0.1)) drop-shadow(-1px -1px 0px rgba(0,0,0,0.3)) drop-shadow(1px -1px 0px rgba(0,0,0,0.1)) drop-shadow(-1px 1px 0px rgba(0,0,0,0.1))' }}
+            >
               Level up
             </h1>
-            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[7rem] font-black italic uppercase tracking-tighter leading-[0.9] text-transparent bg-clip-text bg-gradient-to-r from-[#00b8cc] via-[#0090a8] to-[#006080] pb-6 pr-4 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+            <h1 
+              className="text-4xl sm:text-5xl md:text-7xl lg:text-[7rem] font-black italic uppercase tracking-normal leading-[0.9] text-transparent bg-clip-text bg-gradient-to-r from-[#00eeff] via-[#00d0f0] to-[#0090b0] pb-12 pr-16"
+              style={{ filter: 'drop-shadow(1px 1px 0px rgba(0,0,0,0.1)) drop-shadow(-1px -1px 0px rgba(0,0,0,0.3)) drop-shadow(1px -1px 0px rgba(0,0,0,0.1)) drop-shadow(-1px 1px 0px rgba(0,0,0,0.1))' }}
+            >
               Reality
             </h1>
             <motion.div
@@ -708,7 +714,7 @@ function TeamMemberCard({ member }: { member: { name: string; discord: string; t
               <TwitterIcon className="w-5 h-5" />
             </span>
           )}
-          {member.github !== 'placeholder' ? (
+          {member.github && member.github !== 'placeholder' ? (
             <a href={`https://github.com/${member.github}`} target="_blank" rel="noopener noreferrer" className="p-2 rounded bg-white/10 text-gray-300 hover:text-white transition-colors" title="GitHub">
               <Github className="w-5 h-5" />
             </a>
@@ -732,37 +738,46 @@ function TeamMemberCard({ member }: { member: { name: string; discord: string; t
 //  EXIT PORTAL (at end of dungeon)
 // ═══════════════════════════════════════════
 function ExitPortal() {
-  return (
-    <div className="relative w-[200px] h-[280px] md:w-[280px] md:h-[380px]">
-      {/* Outer glow */}
-      <motion.div
-        animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
-        transition={{ repeat: Infinity, duration: 2.5 }}
-        className="absolute inset-[-100px] rounded-full blur-[100px]"
-        style={{ background: 'radial-gradient(ellipse, rgba(0,238,255,0.6) 0%, transparent 70%)' }}
-      />
-      {/* Inner glow */}
-      <motion.div
-        animate={{ scale: [1.1, 1, 1.1], opacity: [0.3, 0.5, 0.3] }}
-        transition={{ repeat: Infinity, duration: 1.8 }}
-        className="absolute inset-[-60px] rounded-full blur-[60px]"
-        style={{ background: 'radial-gradient(ellipse, rgba(150,230,255,0.5) 0%, transparent 70%)' }}
-      />
-      {/* Portal body */}
-      <div
-        className="absolute inset-0 rounded-[50%] overflow-hidden"
-        style={{
-          background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.98) 0%, rgba(220,250,255,0.95) 20%, rgba(0,238,255,0.85) 40%, rgba(0,180,220,0.6) 60%, rgba(0,100,180,0.3) 80%, transparent 100%)',
-          boxShadow: '0 0 80px rgba(0,238,255,0.7), 0 0 150px rgba(0,238,255,0.4), inset 0 0 50px rgba(255,255,255,0.5)',
-        }}
-      >
-        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 12, ease: 'linear' }} className="absolute inset-[5%] rounded-[50%]" style={{ background: 'conic-gradient(from 0deg, transparent, rgba(255,255,255,0.4) 15%, transparent 30%, rgba(200,245,255,0.35) 50%, transparent 65%, rgba(255,255,255,0.45) 80%, transparent 95%)' }} />
-        <motion.div animate={{ rotate: -360 }} transition={{ repeat: Infinity, duration: 8, ease: 'linear' }} className="absolute inset-[15%] rounded-[50%]" style={{ background: 'conic-gradient(from 180deg, transparent, rgba(255,255,255,0.5) 20%, transparent 40%, rgba(230,250,255,0.4) 60%, transparent 80%, rgba(255,255,255,0.5) 95%)' }} />
-        <div className="absolute inset-[35%] rounded-full" style={{ background: 'radial-gradient(circle, white 0%, rgba(240,252,255,0.95) 50%, rgba(200,245,255,0.7) 80%, transparent 100%)' }} />
-        <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.6, 1, 0.6] }} transition={{ repeat: Infinity, duration: 1.5 }} className="absolute inset-[45%] rounded-full bg-white blur-[4px]" />
+  const [useGif, setUseGif] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => setUseGif(true);
+    img.onerror = () => setUseGif(false);
+    img.src = '/assets/portal.gif';
+  }, []);
+
+  if (useGif === null) {
+    return <div className="w-[180px] h-[250px] sm:w-[220px] sm:h-[300px] md:w-[280px] md:h-[380px]" />;
+  }
+
+  if (useGif) {
+    return (
+      <div className="relative w-[180px] h-[250px] sm:w-[220px] sm:h-[300px] md:w-[280px] md:h-[380px]">
+        <motion.div
+          animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.35, 0.15] }}
+          transition={{ repeat: Infinity, duration: 3 }}
+          className="absolute inset-[-80px] rounded-full blur-[80px]"
+          style={{ background: 'radial-gradient(ellipse, rgba(0,238,255,0.5) 0%, transparent 70%)' }}
+        />
+        <img 
+          src="/assets/portal.gif" 
+          alt="Portal" 
+          className="absolute inset-0 w-full h-full object-contain"
+        />
+        <motion.div 
+          animate={{ opacity: [0.3, 0.7, 0.3] }} 
+          transition={{ repeat: Infinity, duration: 2.5 }} 
+          className="absolute inset-[-2px] rounded-[50%] pointer-events-none" 
+          style={{ border: '2px solid rgba(0,238,255,0.5)', boxShadow: '0 0 20px rgba(0,238,255,0.4)' }} 
+        />
       </div>
-      {/* Border ring */}
-      <motion.div animate={{ opacity: [0.4, 0.8, 0.4] }} transition={{ repeat: Infinity, duration: 2 }} className="absolute inset-[-3px] rounded-[50%]" style={{ border: '3px solid rgba(0,238,255,0.6)', boxShadow: '0 0 30px rgba(0,238,255,0.5)' }} />
+    );
+  }
+
+  return (
+    <div className="relative w-[200px] h-[200px] sm:w-[260px] sm:h-[260px] md:w-[320px] md:h-[320px] pointer-events-none">
+      <Portal3D />
       {/* "EXIT" label */}
       <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-center">
         <p className="text-[#00eeff] text-xs font-mono uppercase tracking-[0.4em]">Exit Gate</p>
@@ -969,11 +984,11 @@ function SummarySection() {
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { name: 'Aera', discord: 'aeradynamics.', twitter: 'aera0908', github: 'aera0908', avatar: '/team/aera.png' },
-              { name: 'Crispychili', discord: 'placeholder', twitter: 'placeholder', github: 'placeholder', avatar: '/team/crispychili.png' },
+              { name: 'Aera', discord: 'aeradynamics.', twitter: 'aera0908', github: 'aera0908', avatar: '/assets/dev-team/Aera-2.jpg' },
+              { name: 'Crispychili', discord: 'cuppateaa_', twitter: 'cuppateaa_', github: 'crispychili', avatar: '/assets/dev-team/Crispychili.jpg' },
               { name: 'Supremo', discord: 'placeholder', twitter: 'placeholder', github: 'placeholder', avatar: '/team/supremo.png' },
-              { name: 'Yonaka', discord: 'placeholder', twitter: 'placeholder', github: 'placeholder', avatar: '/team/yonaka.png' },
-              { name: 'Hinode', discord: 'placeholder', twitter: 'placeholder', github: 'placeholder', avatar: '/team/hinode.png' },
+              { name: 'Yonaka', discord: 'ynk_web3', twitter: 'ynk2528', github: 'yonaka-png', avatar: '/assets/dev-team/Yonaka.jpg' },
+              { name: 'Hinode', discord: 'hinode_web3', twitter: 'hinode_web3', github: '', avatar: '/assets/dev-team/Hinode.jpg' },
             ].map((member) => (
               <TeamMemberCard key={member.name} member={member} />
             ))}
@@ -1053,42 +1068,46 @@ function HudLine({ children }: { children: React.ReactNode }) {
 }
 
 function Portal() {
-  return (
-    <div className="relative w-[180px] h-[250px] sm:w-[220px] sm:h-[300px] md:w-[280px] md:h-[380px]">
-      <motion.div
-        animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.35, 0.15] }}
-        transition={{ repeat: Infinity, duration: 3 }}
-        className="absolute inset-[-80px] rounded-full blur-[80px]"
-        style={{ background: 'radial-gradient(ellipse, rgba(0,238,255,0.5) 0%, transparent 70%)' }}
-      />
-      <motion.div
-        animate={{ scale: [1.1, 1, 1.1], opacity: [0.2, 0.4, 0.2] }}
-        transition={{ repeat: Infinity, duration: 2 }}
-        className="absolute inset-[-50px] rounded-full blur-[50px]"
-        style={{ background: 'radial-gradient(ellipse, rgba(100,200,255,0.5) 0%, transparent 70%)' }}
-      />
-      {[...Array(8)].map((_, i) => (
+  const [useGif, setUseGif] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => setUseGif(true);
+    img.onerror = () => setUseGif(false);
+    img.src = '/assets/portal.gif';
+  }, []);
+
+  if (useGif === null) {
+    return <div className="w-[180px] h-[250px] sm:w-[220px] sm:h-[300px] md:w-[280px] md:h-[380px]" />;
+  }
+
+  if (useGif) {
+    return (
+      <div className="relative w-[180px] h-[250px] sm:w-[220px] sm:h-[300px] md:w-[280px] md:h-[380px]">
         <motion.div
-          key={i}
-          animate={{ y: [0, -50 - i * 6], x: [0, (i % 2 === 0 ? 1 : -1) * (6 + i * 2)], opacity: [0, 0.5, 0] }}
-          transition={{ repeat: Infinity, duration: 1.4 + i * 0.12, delay: i * 0.15, ease: 'easeOut' }}
-          className="absolute rounded-full blur-[2px]"
-          style={{ left: `${15 + i * 8.5}%`, bottom: '22%', width: 3 + (i % 3) * 2, height: 14 + (i % 4) * 4, background: 'linear-gradient(to top, transparent, rgba(0,238,255,0.6))' }}
+          animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.35, 0.15] }}
+          transition={{ repeat: Infinity, duration: 3 }}
+          className="absolute inset-[-80px] rounded-full blur-[80px]"
+          style={{ background: 'radial-gradient(ellipse, rgba(0,238,255,0.5) 0%, transparent 70%)' }}
         />
-      ))}
-      <div
-        className="absolute inset-0 rounded-[50%] overflow-hidden"
-        style={{
-          background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.97) 0%, rgba(200,245,255,0.9) 15%, rgba(0,238,255,0.8) 35%, rgba(0,160,210,0.6) 55%, rgba(0,80,160,0.4) 75%, transparent 100%)',
-          boxShadow: '0 0 60px rgba(0,238,255,0.6), 0 0 120px rgba(0,238,255,0.35), inset 0 0 40px rgba(255,255,255,0.4)',
-        }}
-      >
-        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 14, ease: 'linear' }} className="absolute inset-[4%] rounded-[50%]" style={{ background: 'conic-gradient(from 0deg, transparent, rgba(255,255,255,0.35) 12%, transparent 25%, rgba(200,240,255,0.3) 40%, transparent 55%, rgba(255,255,255,0.4) 72%, transparent 88%)' }} />
-        <motion.div animate={{ rotate: -360 }} transition={{ repeat: Infinity, duration: 9, ease: 'linear' }} className="absolute inset-[14%] rounded-[50%]" style={{ background: 'conic-gradient(from 180deg, transparent, rgba(255,255,255,0.5) 16%, transparent 33%, rgba(220,250,255,0.4) 55%, transparent 75%, rgba(255,255,255,0.45) 90%)' }} />
-        <div className="absolute inset-[36%] rounded-full" style={{ background: 'radial-gradient(circle, white 0%, rgba(235,250,255,0.9) 40%, rgba(180,235,255,0.6) 70%, transparent 100%)' }} />
-        <motion.div animate={{ scale: [1, 1.4, 1], opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 2 }} className="absolute inset-[44%] rounded-full bg-white blur-[3px]" />
+        <img 
+          src="/assets/portal.gif" 
+          alt="Portal" 
+          className="absolute inset-0 w-full h-full object-contain"
+        />
+        <motion.div 
+          animate={{ opacity: [0.3, 0.7, 0.3] }} 
+          transition={{ repeat: Infinity, duration: 2.5 }} 
+          className="absolute inset-[-2px] rounded-[50%] pointer-events-none" 
+          style={{ border: '2px solid rgba(0,238,255,0.5)', boxShadow: '0 0 20px rgba(0,238,255,0.4)' }} 
+        />
       </div>
-      <motion.div animate={{ opacity: [0.3, 0.7, 0.3] }} transition={{ repeat: Infinity, duration: 2.5 }} className="absolute inset-[-2px] rounded-[50%]" style={{ border: '2px solid rgba(0,238,255,0.5)', boxShadow: '0 0 20px rgba(0,238,255,0.4)' }} />
+    );
+  }
+
+  return (
+    <div className="relative w-[200px] h-[200px] sm:w-[260px] sm:h-[260px] md:w-[320px] md:h-[320px] pointer-events-none">
+      <Portal3D />
     </div>
   );
 }
