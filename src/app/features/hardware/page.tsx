@@ -178,15 +178,8 @@ export default function HardwarePage() {
                 icon: Shield,
                 title: 'Hardware Wallet Ledger',
                 desc: 'Secure on-device key storage turns your watch into a crypto hardware wallet for signing AERO transactions.',
-                status: 'Planned',
-                statusColor: 'text-yellow-400 bg-yellow-500/10',
-              },
-              {
-                icon: Gauge,
-                title: 'IMU Form Validation',
-                desc: 'Compare watch motion patterns to expected exercise movements for real-time form feedback.',
-                status: 'In Progress',
-                statusColor: 'text-blue-400 bg-blue-500/10',
+                status: 'Implemented',
+                statusColor: 'text-green-400 bg-green-500/10',
               },
               {
                 icon: Vibrate,
@@ -198,14 +191,7 @@ export default function HardwarePage() {
               {
                 icon: Activity,
                 title: 'Activity Detection',
-                desc: 'Automatically detect exercise type from motion patterns - running, cycling, weightlifting.',
-                status: 'Planned',
-                statusColor: 'text-yellow-400 bg-yellow-500/10',
-              },
-              {
-                icon: Wifi,
-                title: 'Direct Web3 Connection',
-                desc: 'WiFi connectivity for direct blockchain API calls without requiring phone.',
+                desc: 'Automatically detect activity type from motion patterns — idle, slow walk, walk, running.',
                 status: 'Planned',
                 statusColor: 'text-yellow-400 bg-yellow-500/10',
               },

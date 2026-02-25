@@ -27,26 +27,20 @@ const PANELS = [
   { z: -800, x: -220, y: -20 },    // 0: Intro
   { z: -2400, x: 200, y: 30 },     // 1: Vision
   { z: -4000, x: -200, y: -40 },   // 2: Gamification
-  { z: -5600, x: -200, y: -20 },   // 3: App Demo - text + video side
-  { z: -7200, x: 180, y: 20 },     // 4: Web3
-  { z: -8800, x: -180, y: -30 },   // 5: Hardware
-  { z: -10400, x: 0, y: 0 },       // 6: Watch 3D - center
+  { z: -5600, x: 180, y: 20 },     // 3: Web3
+  { z: -7200, x: -180, y: -30 },   // 4: Hardware
 ];
 
-const EXIT_PORTAL_Z = -13000;
-const MAX_WORLD_Z = 13000;
-
-const WATCH_3D_PANEL_INDEX = 6;  // Only center panel
+const EXIT_PORTAL_Z = -11400;
+const MAX_WORLD_Z = 11400;
 
 // [stickStart, stickEnd, releaseEnd]
 const STICK_RANGES: [number, number, number][] = [
   [800, 1600, 2000],     // 0: Intro
   [2400, 3200, 3600],    // 1: Vision
   [4000, 4800, 5200],    // 2: Gamification
-  [5600, 6400, 6800],    // 3: App Demo
-  [7200, 8000, 8400],    // 4: Web3
-  [8800, 9600, 10000],   // 5: Hardware
-  [10400, 11000, 11500], // 6: Watch 3D
+  [5600, 6400, 6800],    // 3: Web3
+  [7200, 8000, 8400],    // 4: Hardware
 ];
 
 const STICK_BLEND = 90;  // Wider blend zone for smoother 3D -> overlay transition
@@ -108,8 +102,7 @@ function PanelOverlay({ worldZ, stuckPanel, blending, releasing }: {
   blending: { index: number; opacity: number } | null;
   releasing: { index: number; progress: number } | null;
 }) {
-  const idx = blending?.index ?? stuckPanel >= 0 ? stuckPanel : releasing?.index ?? -1;
-  const isCenterPanel = idx === WATCH_3D_PANEL_INDEX;
+  const idx = blending?.index ?? (stuckPanel >= 0 ? stuckPanel : (releasing?.index ?? -1));
   const pos = idx >= 0 ? PANELS[idx] : { z: 0, x: 0, y: 0 };
 
   const projected = projectPosition(worldZ, pos);
@@ -118,10 +111,7 @@ function PanelOverlay({ worldZ, stuckPanel, blending, releasing }: {
   const baseScale = blending ? 0.98 + 0.52 * blending.opacity : 1.5;
   const slideAmount = 500 * (pos.x < 0 ? -1 : 1);
   
-  // Direct position values (no spring) to avoid teleport-to-center effect
-  const baseX = isCenterPanel
-    ? (releasing ? slideAmount * releasing.progress : 0)
-    : (blending ? projected.x : (releasing ? stuckProjected.x + slideAmount * releasing.progress : stuckProjected.x));
+  const baseX = blending ? projected.x : (releasing ? stuckProjected.x + slideAmount * releasing.progress : stuckProjected.x);
   const baseY = blending ? projected.y : stuckProjected.y;
 
   // Only spring scale for smooth ease in/out
@@ -140,10 +130,8 @@ function PanelOverlay({ worldZ, stuckPanel, blending, releasing }: {
           {idx === 0 && <IntroPanel />}
           {idx === 1 && <VisionPanel />}
           {idx === 2 && <GamificationPanel />}
-          {idx === 3 && <AppDemoPanel />}
-          {idx === 4 && <Web3Panel />}
-          {idx === 5 && <HardwarePanel />}
-          {idx === 6 && <Watch3DPanel />}
+          {idx === 3 && <Web3Panel />}
+          {idx === 4 && <HardwarePanel />}
         </motion.div>
       </div>
     </div>
@@ -311,10 +299,8 @@ export default function Home() {
               {isPanelApproaching(worldZ, 0) && <Panel3D pos={PANELS[0]}><IntroPanel /></Panel3D>}
               {isPanelApproaching(worldZ, 1) && <Panel3D pos={PANELS[1]}><VisionPanel /></Panel3D>}
               {isPanelApproaching(worldZ, 2) && <Panel3D pos={PANELS[2]}><GamificationPanel /></Panel3D>}
-              {isPanelApproaching(worldZ, 3) && <Panel3D pos={PANELS[3]}><AppDemoPanel /></Panel3D>}
-              {isPanelApproaching(worldZ, 4) && <Panel3D pos={PANELS[4]}><Web3Panel /></Panel3D>}
-              {isPanelApproaching(worldZ, 5) && <Panel3D pos={PANELS[5]}><HardwarePanel /></Panel3D>}
-              {isPanelApproaching(worldZ, 6) && <Panel3D pos={PANELS[6]}><Watch3DPanel /></Panel3D>}
+              {isPanelApproaching(worldZ, 3) && <Panel3D pos={PANELS[3]}><Web3Panel /></Panel3D>}
+              {isPanelApproaching(worldZ, 4) && <Panel3D pos={PANELS[4]}><HardwarePanel /></Panel3D>}
 
               {/* Exit Portal at the end */}
               <div
@@ -416,52 +402,25 @@ function Panel3D({ pos, children }: { pos: { z: number; x: number; y: number }; 
 // ═══════════════════════════════════════════
 
 // Video slot for panel side - compact playback
-function PanelVideo({ src, poster }: { src?: string; poster?: string }) {
+// BlazePose sample image for Pose Detection panel - uses media's native resolution
+// Source: https://research.google/blog/on-device-real-time-body-pose-tracking-with-mediapipe-blazepose/
+function BlazePoseSample() {
   const [err, setErr] = useState(false);
+  const src = 'https://1.bp.blogspot.com/-Q64KtZLWOT8/XzVxdkZDMgI/AAAAAAAAGYk/qj7mLsOL3AMcDkusMgYDGrSqauRAljR9gCLcBGAsYHQ/s924/image8.gif';
   return (
-    <div className="rounded-lg overflow-hidden bg-black aspect-[9/16] border border-[#00eeff]/20">
-      {src && !err ? (
-        <video src={src} poster={poster} autoPlay loop muted playsInline className="w-full h-full object-cover" onError={() => setErr(true)} />
+    <div className="rounded-lg overflow-hidden bg-black border border-[#00eeff]/20 inline-block max-w-full">
+      {!err ? (
+        <img
+          src={src}
+          alt="BlazePose exercise counter - squats and push-ups"
+          className="block max-w-full h-auto"
+          onError={() => setErr(true)}
+        />
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-gradient-to-b from-[#00eeff]/10 to-transparent">
-          <span className="text-[#00eeff]/40 text-[8px] uppercase">Video</span>
+        <div className="w-64 h-36 flex items-center justify-center bg-gradient-to-b from-[#00eeff]/10 to-transparent">
+          <span className="text-[#00eeff]/40 text-[8px] uppercase">BlazePose</span>
         </div>
       )}
-    </div>
-  );
-}
-
-// Standalone floating 3D watch render - hero visual for hardware section
-function Floating3DWatch({ src }: { src?: string }) {
-  const [imgError, setImgError] = useState(false);
-  const showImg = src && !imgError;
-  return (
-    <div className="flex items-center justify-center" style={{ perspective: 1000 }}>
-      <div
-        className="relative"
-        style={{
-          width: 280,
-          transform: 'rotateY(-12deg) rotateX(8deg)',
-          transformStyle: 'preserve-3d',
-          filter: 'drop-shadow(0 40px 50px rgba(0,0,0,0.5)) drop-shadow(0 0 80px rgba(0,238,255,0.12))',
-        }}
-      >
-        <div className="rounded-2xl overflow-hidden bg-white/5 border border-[#00eeff]/20 aspect-square">
-          {showImg ? (
-            <img
-              src={src}
-              alt="Aerovit Smartwatch"
-              className="w-full h-full object-contain p-6"
-              onError={() => setImgError(true)}
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-b from-[#00eeff]/10 to-transparent">
-              <Cpu className="w-16 h-16 text-[#00eeff]/30" />
-              <span className="absolute text-[8px] text-[#00eeff]/40 uppercase tracking-widest">Watch 3D</span>
-            </div>
-          )}
-        </div>
-      </div>
     </div>
   );
 }
@@ -470,9 +429,9 @@ function HardwareImage({ src, alt }: { src?: string; alt: string }) {
   const [imgError, setImgError] = useState(false);
   const showImg = src && !imgError;
   return (
-    <div className="relative aspect-square rounded-lg overflow-hidden bg-white/5 border border-[#00eeff]/20 mb-3 min-h-[100px]">
+    <div className="relative aspect-square rounded-lg overflow-hidden bg-white/5 border border-[#00eeff]/20 min-h-[100px]">
       {showImg ? (
-        <img src={src} alt={alt} className="w-full h-full object-contain p-2" onError={() => setImgError(true)} />
+        <img src={src} alt={alt} className="w-full h-full object-contain p-2 rounded-lg" onError={() => setImgError(true)} />
       ) : (
         <div className="w-full h-full flex items-center justify-center">
           <Cpu className="w-12 h-12 text-[#00eeff]/30" />
@@ -483,9 +442,9 @@ function HardwareImage({ src, alt }: { src?: string; alt: string }) {
   );
 }
 
-function PanelFrame({ id, title, children, media, mediaSide = 'right' }: {
+function PanelFrame({ id, title, children, media, mediaSide = 'right', mediaPosition = 'side', wide, mediaSize = 'default' }: {
   id: string; title: string; children: React.ReactNode;
-  media?: React.ReactNode; mediaSide?: 'left' | 'right';
+  media?: React.ReactNode; mediaSide?: 'left' | 'right'; mediaPosition?: 'side' | 'bottom'; wide?: boolean; mediaSize?: 'default' | 'large';
 }) {
   const content = (
     <div className="flex-1 min-w-0">
@@ -498,12 +457,15 @@ function PanelFrame({ id, title, children, media, mediaSide = 'right' }: {
       {children}
     </div>
   );
-  const mediaSlot = media && (
-    <div className="flex-shrink-0 w-[140px] md:w-[160px]">{media}</div>
+  const mediaSlot = media && mediaPosition === 'side' && (
+    <div className={`flex-shrink-0 ${mediaSize === 'large' ? 'w-[200px] md:w-[240px]' : 'w-[140px] md:w-[160px]'}`}>{media}</div>
+  );
+  const mediaBelow = media && mediaPosition === 'bottom' && (
+    <div className="w-full mt-4">{media}</div>
   );
   return (
     <div
-      className="w-[380px] max-w-[85vw] p-4 backdrop-blur-md flex gap-4"
+      className={`${wide ? 'w-[520px]' : 'w-[380px]'} max-w-[90vw] p-4 backdrop-blur-md flex flex-col`}
       style={{
         backgroundColor: 'rgba(1,8,16,0.92)',
         borderLeft: '3px solid #00eeff',
@@ -511,16 +473,19 @@ function PanelFrame({ id, title, children, media, mediaSide = 'right' }: {
         boxShadow: '0 0 30px rgba(0,238,255,0.1)',
       }}
     >
-      {mediaSide === 'left' && mediaSlot}
-      {content}
-      {mediaSide === 'right' && mediaSlot}
+      <div className="flex gap-4 items-center">
+        {mediaSide === 'left' && mediaSlot}
+        {content}
+        {mediaSide === 'right' && mediaSlot}
+      </div>
+      {mediaBelow}
     </div>
   );
 }
 
 function IntroPanel() {
   return (
-    <PanelFrame id="01" title="System Online" media={<PanelVideo src="/media/app-overview.mp4" poster="/media/app-overview-poster.jpg" />} mediaSide="right">
+    <PanelFrame id="01" title="System Online">
       <p className="text-sm text-gray-300 leading-relaxed mb-3">
         Welcome to <span className="text-[#00eeff] font-bold">AEROVIT</span>, Hunter. 
         A gamified fitness platform combining AI, custom hardware, and blockchain rewards.
@@ -544,7 +509,7 @@ function IntroPanel() {
 
 function VisionPanel() {
   return (
-    <PanelFrame id="02" title="Pose Detection" media={<PanelVideo src="/media/pose-demo.mp4" poster="/media/pose-demo-poster.jpg" />} mediaSide="left">
+    <PanelFrame id="02" title="Pose Detection" media={<BlazePoseSample />} mediaPosition="bottom">
       <p className="text-sm text-gray-300 leading-relaxed mb-2">
         Real-time skeletal tracking with <span className="text-[#00eeff]">33 body landmarks</span> using MediaPipe BlazePose.
       </p>
@@ -567,11 +532,11 @@ function VisionPanel() {
 
 function GamificationPanel() {
   return (
-    <PanelFrame id="03" title="Rank System" media={<PanelVideo src="/media/rank-ui.mp4" poster="/media/rank-ui-poster.jpg" />} mediaSide="right">
-      <p className="text-sm text-gray-300 leading-relaxed mb-2">
+    <PanelFrame id="03" title="Rank System">
+      <p className="text-sm text-gray-300 leading-relaxed mb-3">
         Solo Leveling-inspired progression. Earn XP, level up, and climb the ranks.
       </p>
-      <div className="space-y-1.5 mb-3">
+      <div className="flex flex-wrap gap-2 mb-3">
         {[
           { rank: 'E-Rank', lvl: '1-5', color: 'text-blue-400' },
           { rank: 'D-Rank', lvl: '6-10', color: 'text-blue-400' },
@@ -580,11 +545,16 @@ function GamificationPanel() {
           { rank: 'A-Rank', lvl: '21-25', color: 'text-yellow-400' },
           { rank: 'S-Rank', lvl: '26+', color: 'text-yellow-400' },
         ].map((r) => (
-          <div key={r.rank} className="flex justify-between text-xs p-1.5 bg-white/5">
+          <div key={r.rank} className="flex justify-between items-center gap-2 text-xs px-2 py-1.5 bg-white/5">
             <span className={`font-bold ${r.color}`}>{r.rank}</span>
             <span className="text-gray-500">Lv {r.lvl}</span>
           </div>
         ))}
+      </div>
+      <div className="space-y-1 text-[10px] text-gray-400">
+        <div className="flex items-center gap-2"><span className="w-1 h-1 bg-[#00eeff] rounded-full" />Social: Leaderboards & Friends</div>
+        <div className="flex items-center gap-2"><span className="w-1 h-1 bg-[#00eeff] rounded-full" />Compare hunters (level, streak, dungeon)</div>
+        <div className="flex items-center gap-2"><span className="w-1 h-1 bg-[#00eeff] rounded-full" />Trophy case: display 3 achievements</div>
       </div>
     </PanelFrame>
   );
@@ -592,41 +562,31 @@ function GamificationPanel() {
 
 function Web3Panel() {
   return (
-    <PanelFrame id="04" title="Blockchain Rewards" media={<HardwareImage src="/media/token-rewards.png" alt="AERO Token" />} mediaSide="left">
+    <PanelFrame id="04" title="Blockchain Rewards" wide>
       <div className="flex items-center gap-2 mb-2">
-        <Clock className="w-3 h-3 text-yellow-500" />
-        <span className="text-[9px] uppercase tracking-wider text-yellow-500">Coming Soon</span>
+        <Trophy className="w-3 h-3 text-green-400" />
+        <span className="text-[9px] uppercase tracking-wider text-green-400">Implemented</span>
       </div>
       <p className="text-sm text-gray-300 leading-relaxed mb-3">
-        Earn <span className="text-yellow-400 font-bold">AERO tokens</span> for workouts. 
-        Turn fitness achievements into real rewards.
+        Earn <span className="text-yellow-400 font-bold">In-game Aero coin</span> for workouts. 
+        Turn fitness achievements into real blockchain rewards.
       </p>
-      <div className="space-y-1.5 text-xs">
-        {[
-          { act: 'Complete Workout', pts: '50 pts' },
-          { act: 'Quest Completion', pts: '100-500 pts' },
-          { act: 'Daily Login', pts: '10 pts' },
-        ].map((e) => (
-          <div key={e.act} className="flex justify-between p-1.5 bg-yellow-500/5 border border-yellow-500/20">
-            <span className="text-gray-400">{e.act}</span>
-            <span className="text-yellow-400">{e.pts}</span>
+      <div className="text-xs text-gray-400 mb-3">
+        <p className="font-medium text-[#00eeff]/80 mb-2">Transaction flow</p>
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2 p-2 bg-white/5 border border-white/10">
+            <span className="w-5 h-5 rounded-full bg-[#00eeff]/20 flex items-center justify-center text-[10px] font-bold">1</span>
+            <span>Complete workout / quest</span>
           </div>
-        ))}
-      </div>
-    </PanelFrame>
-  );
-}
-
-function AppDemoPanel() {
-  return (
-    <PanelFrame id="03b" title="App Demo" media={<PanelVideo src="/media/app-overview.mp4" poster="/media/app-overview-poster.jpg" />} mediaSide="right">
-      <p className="text-sm text-gray-300 leading-relaxed mb-2">
-        See the app in action — pose detection, ranks, and rewards.
-      </p>
-      <div className="space-y-1.5 text-xs text-gray-400">
-        <div className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-[#00eeff] rounded-full" />Real-time form validation</div>
-        <div className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-[#00eeff] rounded-full" />Rank progression</div>
-        <div className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-[#00eeff] rounded-full" />Biometric sync</div>
+          <div className="flex items-center gap-2 p-2 bg-white/5 border border-white/10">
+            <span className="w-5 h-5 rounded-full bg-[#00eeff]/20 flex items-center justify-center text-[10px] font-bold">2</span>
+            <span>Earn in-game Aero coin</span>
+          </div>
+          <div className="flex items-center gap-2 p-2 bg-white/5 border border-white/10">
+            <span className="w-5 h-5 rounded-full bg-[#00eeff]/20 flex items-center justify-center text-[10px] font-bold">3</span>
+            <span>Convert to AERO token (on-chain)</span>
+          </div>
+        </div>
       </div>
     </PanelFrame>
   );
@@ -634,35 +594,30 @@ function AppDemoPanel() {
 
 function HardwarePanel() {
   return (
-    <PanelFrame id="05" title="Custom Smartwatch" media={<HardwareImage src="/media/smartwatch.png" alt="Aerovit Smartwatch" />} mediaSide="right">
+    <PanelFrame id="04" title="Custom Smartwatch" media={<HardwareImage src="/assets/hardware/watch-model.png" alt="Aerovit Smartwatch" />} mediaSide="right" mediaSize="large" wide>
       <p className="text-sm text-gray-300 leading-relaxed mb-2">
-        Purpose-built wearable with premium biometric sensors for real-time fitness tracking.
+        Custom wearable with software features for real-time fitness tracking. Touch display for intuitive control.
       </p>
-      <div className="grid grid-cols-2 gap-2">
-        {[
-          { label: 'Processor', value: 'ESP32-S3' },
-          { label: 'Biometrics', value: 'MAX30102' },
-          { label: 'IMU', value: 'QMI8658' },
-          { label: 'Display', value: '1.69" LCD' },
-        ].map((s) => (
-          <div key={s.label} className="p-2 bg-[#00eeff]/5 border border-[#00eeff]/20">
-            <p className="text-[8px] text-[#00eeff]/60 uppercase">{s.label}</p>
-            <p className="text-sm font-bold text-white">{s.value}</p>
-          </div>
-        ))}
+      <div className="space-y-2">
+        <div className="p-2 bg-[#00eeff]/5 border border-[#00eeff]/20">
+          <p className="text-[8px] text-[#00eeff]/60 uppercase">Display</p>
+          <p className="text-sm font-bold text-white">1.69&quot; touch LCD</p>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          {[
+            { label: 'Workout sync', value: 'BLE to app' },
+            { label: 'Live stats', value: 'HR, reps' },
+            { label: 'Notifications', value: 'Quest alerts' },
+            { label: 'Achievements', value: 'Badges' },
+          ].map((s) => (
+            <div key={s.label} className="p-2 bg-[#00eeff]/5 border border-[#00eeff]/20">
+              <p className="text-[8px] text-[#00eeff]/60 uppercase">{s.label}</p>
+              <p className="text-sm font-bold text-white">{s.value}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </PanelFrame>
-  );
-}
-
-function Watch3DPanel() {
-  return (
-    <div className="flex flex-col items-center justify-center gap-4">
-      <Floating3DWatch src="/media/watch-3d.png" />
-      <p className="text-xs text-[#00eeff]/60 uppercase tracking-widest max-w-[280px] text-center">
-        Purpose-built wearable — premium biometric sensors
-      </p>
-    </div>
   );
 }
 
@@ -855,11 +810,11 @@ function SummarySection() {
             <Cpu className="w-8 h-8 text-[#00eeff] mb-4" />
             <h3 className="text-lg font-bold text-[#00eeff] mb-3">Custom Smartwatch</h3>
             <ul className="space-y-2 text-sm text-gray-400">
-              <li>• ESP32-S3 dual-core @ 240MHz</li>
-              <li>• MAX30102 HR & SpO2 sensor</li>
-              <li>• QMI8658 6-axis IMU</li>
               <li>• 1.69&quot; touch LCD display</li>
-              <li>• BLE 5.0 connectivity</li>
+              <li>• Workout sync via BLE</li>
+              <li>• Live stats (HR, reps)</li>
+              <li>• Quest notifications</li>
+              <li>• Achievement badges</li>
             </ul>
             <div className="mt-4 pt-4 border-t border-white/10">
               <span className="text-xs text-green-400 uppercase">✓ Implemented</span>
@@ -874,8 +829,11 @@ function SummarySection() {
               <li>• Hunter rank progression (E → S)</li>
               <li>• XP from workouts & form</li>
               <li>• Daily quests & streaks</li>
-              <li>• Achievement badges</li>
-              <li>• Global leaderboards</li>
+              <li>• Achievement badges & profile titles</li>
+              <li>• Social tab: Leaderboards (Local/Global/Friends) & Friends</li>
+              <li>• Compare hunters: level, streak, dungeon character</li>
+              <li>• Trophy case: display up to 3 achievements on profile</li>
+              <li>• Notification bell (mute in Settings)</li>
             </ul>
             <div className="mt-4 pt-4 border-t border-white/10">
               <span className="text-xs text-green-400 uppercase">✓ Implemented</span>
@@ -889,12 +847,12 @@ function SummarySection() {
             <ul className="space-y-2 text-sm text-gray-400">
               <li>• AERO Token (ERC-20)</li>
               <li>• Achievement NFTs (ERC-721)</li>
-              <li>• Points-to-token conversion</li>
+              <li>• In-game Aero coin → AERO token</li>
               <li>• MetaMask integration</li>
               <li>• Sepolia testnet deployment</li>
             </ul>
             <div className="mt-4 pt-4 border-t border-white/10">
-              <span className="text-xs text-yellow-400 uppercase">◐ Planned</span>
+              <span className="text-xs text-green-400 uppercase">✓ Implemented</span>
             </div>
           </div>
         </div>
@@ -904,22 +862,24 @@ function SummarySection() {
       <section className="px-6 py-20 bg-white/[0.02]">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-black text-white text-center mb-4">Roadmap</h2>
-          <p className="text-gray-500 text-center mb-12">Features in development and planned for future releases</p>
+          <p className="text-gray-500 text-center mb-2">Features in development and planned for future releases</p>
+          <p className="text-amber-500/90 text-sm text-center mb-12">Aerovit is currently at prototype and testing level — not yet production-ready.</p>
           
           <div className="grid md:grid-cols-2 gap-4">
             {[
-              { t: 'IMU-based exercise form validation', s: 'In Progress' },
+              { t: 'Social leaderboards, friends & compare hunters', s: 'Implemented' },
+              { t: 'Web3 rewards (Aero coin, AERO token)', s: 'Implemented' },
               { t: 'Gesture controls (shake, tap, rotate)', s: 'Planned' },
-              { t: 'Activity auto-detection', s: 'Planned' },
               { t: 'Haptic feedback patterns', s: 'Planned' },
-              { t: 'WiFi direct blockchain connectivity', s: 'Planned' },
               { t: 'OTA firmware updates', s: 'Planned' },
-              { t: 'Stress & recovery scoring', s: 'Planned' },
               { t: 'Social challenges & referrals', s: 'Planned' },
             ].map((f) => (
               <div key={f.t} className="flex items-center justify-between p-4 bg-white/5 border border-white/10">
                 <span className="text-gray-300">{f.t}</span>
-                <span className={`text-xs px-2 py-1 ${f.s === 'In Progress' ? 'bg-blue-500/20 text-blue-400' : 'bg-gray-500/20 text-gray-400'}`}>
+                <span className={`text-xs px-2 py-1 ${
+                  f.s === 'Implemented' ? 'bg-green-500/20 text-green-400' :
+                  f.s === 'In Progress' ? 'bg-blue-500/20 text-blue-400' : 'bg-gray-500/20 text-gray-400'
+                }`}>
                   {f.s}
                 </span>
               </div>
@@ -937,8 +897,8 @@ function SummarySection() {
             { q: 'What is Aerovit?', a: 'Aerovit is a gamified AI fitness platform that combines computer vision pose detection, custom smartwatch hardware, and blockchain rewards to make workouts engaging and rewarding.' },
             { q: 'How does the pose detection work?', a: 'We use MediaPipe BlazePose to track 33 body landmarks in real-time through your device camera. The AI validates your exercise form, counts reps automatically, and provides feedback on your technique.' },
             { q: 'What smartwatch do I need?', a: 'Aerovit uses a custom-built smartwatch based on the ESP32-S3 microcontroller with heart rate, SpO2, and motion sensors. The watch streams biometric data to the app via Bluetooth Low Energy.' },
-            { q: 'How do I earn rewards?', a: 'You earn points through completing workouts, maintaining good form, keeping streaks, and finishing daily quests. Points can be converted to AERO tokens on the blockchain (coming soon).' },
-            { q: 'Is this a real product?', a: 'Aerovit is a gamified AI fitness platform combining computer vision, custom IoT hardware, and blockchain rewards. Core features are implemented and functional.' },
+            { q: 'How do I earn rewards?', a: 'You earn in-game Aero coin through completing workouts, maintaining good form, keeping streaks, and finishing daily quests. The Aerovit smartwatch is required to earn tokens. Aero coin can be converted to AERO tokens on the blockchain. Web3 rewards are implemented and working.' },
+            { q: 'Is this a real product?', a: 'Aerovit is a gamified AI fitness platform combining computer vision, custom IoT hardware, and blockchain rewards. Core features are implemented and functional. The platform is currently at prototype and testing level — not yet production-ready.' },
           ].map((faq) => (
             <details key={faq.q} className="group p-4 bg-white/5 border border-white/10">
               <summary className="flex items-center justify-between cursor-pointer text-white font-medium">
@@ -948,31 +908,6 @@ function SummarySection() {
               <p className="mt-3 text-gray-400 text-sm">{faq.a}</p>
             </details>
           ))}
-        </div>
-      </section>
-
-      {/* Links & Documentation */}
-      <section className="px-6 py-20 bg-white/[0.02]">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-black text-white mb-8">Documentation & Links</h2>
-          
-          <div className="flex flex-wrap justify-center gap-4">
-            <a href="#" className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 hover:border-[#00eeff]/50 transition-colors text-white">
-              <Github className="w-5 h-5" />
-              <span>GitHub Repository</span>
-              <ExternalLink className="w-4 h-4 text-gray-500" />
-            </a>
-            <a href="#" className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 hover:border-[#00eeff]/50 transition-colors text-white">
-              <FileText className="w-5 h-5" />
-              <span>Technical Documentation</span>
-              <ExternalLink className="w-4 h-4 text-gray-500" />
-            </a>
-            <a href="#" className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 hover:border-[#00eeff]/50 transition-colors text-white">
-              <FileText className="w-5 h-5" />
-              <span>API Reference</span>
-              <ExternalLink className="w-4 h-4 text-gray-500" />
-            </a>
-          </div>
         </div>
       </section>
 
@@ -986,7 +921,7 @@ function SummarySection() {
             {[
               { name: 'Aera', discord: 'aeradynamics.', twitter: 'aera0908', github: 'aera0908', avatar: '/assets/dev-team/Aera-2.jpg' },
               { name: 'Crispychili', discord: 'cuppateaa_', twitter: 'cuppateaa_', github: 'crispychili', avatar: '/assets/dev-team/Crispychili.jpg' },
-              { name: 'Supremo', discord: 'placeholder', twitter: 'placeholder', github: 'placeholder', avatar: '/team/supremo.png' },
+              { name: 'Supremo', discord: 'supremo_cp26', twitter: 'supremo_cp26', github: 'christiannn26', avatar: '/assets/dev-team/supremo-avatar.png' },
               { name: 'Yonaka', discord: 'ynk_web3', twitter: 'ynk2528', github: 'yonaka-png', avatar: '/assets/dev-team/Yonaka.jpg' },
               { name: 'Hinode', discord: 'hinode_web3', twitter: 'hinode_web3', github: '', avatar: '/assets/dev-team/Hinode.jpg' },
             ].map((member) => (
@@ -1040,12 +975,12 @@ function SummarySection() {
             </div>
             
             <div className="flex items-center gap-6">
-              <a href="#" className="text-gray-500 hover:text-white transition-colors">
+              <span className="text-gray-600 cursor-not-allowed opacity-60" title="GitHub (coming soon)">
                 <Github className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-gray-500 hover:text-white transition-colors">
+              </span>
+              <span className="text-gray-600 cursor-not-allowed opacity-60" title="Email (coming soon)">
                 <Mail className="w-5 h-5" />
-              </a>
+              </span>
             </div>
           </div>
           

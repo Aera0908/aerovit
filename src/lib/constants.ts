@@ -74,4 +74,5 @@ export const NAV_LINKS = [
   { href: "/features/progression", label: "Progression" },
   { href: "/features/hardware", label: "Hardware" },
   { href: "/features/rewards", label: "Rewards" },
+  { href: "/dev", label: "Developers" },
 ];

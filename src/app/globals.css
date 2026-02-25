@@ -81,3 +81,70 @@ body {
   0%, 100% { opacity: 0.2; }
   50% { opacity: 0.7; }
 }
+
+/* Anime energy aura */
+@keyframes aura-pulse {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.04); }
+}
+@keyframes aura-drift {
+  0%, 100% { transform: translateY(0) scale(1.02); opacity: 0.25; }
+  33% { transform: translateY(-6px) scale(1.06); opacity: 0.5; }
+  66% { transform: translateY(-3px) scale(1.04); opacity: 0.35; }
+}
+@keyframes aura-flicker {
+  0%, 100% { opacity: 0.15; transform: scaleX(1) scaleY(1); }
+  25% { opacity: 0.45; transform: scaleX(1.03) scaleY(1.05); }
+  50% { opacity: 0.2; transform: scaleX(0.98) scaleY(1.02); }
+  75% { opacity: 0.5; transform: scaleX(1.04) scaleY(1.06); }
+}
+
+/* Carousel arrow pulse - position */
+@keyframes pulse-left {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-12px); }
+}
+@keyframes pulse-right {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(12px); }
+}
+.animate-pulse-left {
+  animation: pulse-left 1.2s ease-in-out infinite;
+}
+.animate-pulse-right {
+  animation: pulse-right 1.2s ease-in-out infinite;
+}
+
+/* RIGHT arrow: triple chevron, light sweeps 1→2→3 (inner to outer)
+   1=inner, 2=middle, 3=outer */
+@keyframes arrow-r1 {
+  0% { opacity: 0.8; }
+  20% { opacity: 0.8; }
+  25% { opacity: 0.15; }
+  100% { opacity: 0.15; }
+}
+@keyframes arrow-r2 {
+  0% { opacity: 0.15; }
+  10% { opacity: 0.15; }
+  15% { opacity: 0.8; }
+  35% { opacity: 0.8; }
+  40% { opacity: 0.15; }
+  100% { opacity: 0.15; }
+}
+@keyframes arrow-r3 {
+  0% { opacity: 0.15; }
+  25% { opacity: 0.15; }
+  30% { opacity: 0.8; }
+  50% { opacity: 0.8; }
+  55% { opacity: 0.15; }
+  100% { opacity: 0.15; }
+}
+.arrow-right-1 { animation: arrow-r1 1.2s linear infinite; }
+.arrow-right-2 { animation: arrow-r2 1.2s linear infinite; }
+.arrow-right-3 { animation: arrow-r3 1.2s linear infinite; }
+
+/* LEFT arrow: triple chevron, light sweeps 1→2→3 (inner to outer)
+   Layout: [3][2][1] ← content, so 3=outermost(left), 1=innermost(right) */
+.arrow-left-1 { animation: arrow-r1 1.2s linear infinite; }
+.arrow-left-2 { animation: arrow-r2 1.2s linear infinite; }
+.arrow-left-3 { animation: arrow-r3 1.2s linear infinite; }
