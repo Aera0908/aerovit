@@ -30,14 +30,14 @@ export default function RewardsPage() {
               <div>
                 <div className="flex items-center gap-3 mb-1">
                   <p className="text-yellow-500 text-sm font-mono uppercase tracking-wider">Web3 Integration</p>
-                  <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-xs rounded">Coming Soon</span>
+                  <span className="px-2 py-0.5 bg-green-500/20 text-green-400 text-xs rounded">Sepolia Testnet</span>
                 </div>
                 <h1 className="text-4xl md:text-5xl font-black text-white">Blockchain Rewards</h1>
               </div>
             </div>
             <p className="text-xl text-gray-400 max-w-3xl leading-relaxed">
               Earn AERO tokens for your workouts. Convert fitness achievements into real blockchain rewards 
-              with our ERC-20 token system on the Polygon network.
+              with our ERC-20 token system on the Ethereum Sepolia testnet.
             </p>
           </motion.div>
         </div>
@@ -57,9 +57,11 @@ export default function RewardsPage() {
               <div className="space-y-4">
                 {[
                   { label: 'Token Standard', value: 'ERC-20' },
-                  { label: 'Network', value: 'Polygon (Sepolia Testnet)' },
+                  { label: 'Network', value: 'Ethereum (Sepolia Testnet)' },
+                  { label: 'Max Supply', value: '100,000,000 AERO' },
+                  { label: 'Initial Mint', value: '10,000,000 AERO' },
+                  { label: 'Decimals', value: '18' },
                   { label: 'Conversion Rate', value: '100 Points = 1 AERO' },
-                  { label: 'Min. Conversion', value: '1,000 Points (10 AERO)' },
                 ].map((item) => (
                   <div key={item.label} className="flex justify-between p-4 bg-white/5 border border-white/10">
                     <span className="text-gray-400">{item.label}</span>
@@ -193,7 +195,7 @@ export default function RewardsPage() {
               <h3 className="text-xl font-bold text-white mb-6">Supported Wallets</h3>
               <div className="space-y-4">
                 {[
-                  { name: 'Aerovit Watch', status: 'Planned', desc: 'Hardware wallet ledger on your wrist', icon: Watch, highlight: true },
+                  { name: 'Aerovit Watch', status: 'Implemented', desc: 'Hardware wallet ledger on your wrist', icon: Watch, highlight: true },
                   { name: 'MetaMask', status: 'Primary', desc: 'Browser extension wallet', icon: Wallet, highlight: false },
                   { name: 'WalletConnect', status: 'Supported', desc: 'Mobile wallet connection', icon: Wallet, highlight: false },
                   { name: 'Trust Wallet', status: 'Supported', desc: 'Mobile crypto wallet', icon: Wallet, highlight: false },
@@ -244,18 +246,18 @@ export default function RewardsPage() {
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-3">
                   <h2 className="text-2xl font-black text-white">Watch as Hardware Wallet</h2>
-                  <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-xs rounded">Planned</span>
+                  <span className="px-2 py-0.5 bg-green-500/20 text-green-400 text-xs rounded">Implemented</span>
                 </div>
                 <p className="text-gray-300 mb-6 leading-relaxed">
-                  Your Aerovit smartwatch will double as a secure hardware wallet ledger. Store your private keys 
-                  directly on the watch&apos;s secure element, sign transactions with a physical button press, and 
-                  never expose your keys to potentially compromised phones or computers.
+                  Your Aerovit smartwatch doubles as a secure hardware wallet ledger. Private keys are generated 
+                  and stored on-device using AES-256-CBC encryption with PBKDF2 PIN protection. Sign transactions 
+                  with a physical gesture — keys never leave the ESP32-S3.
                 </p>
                 <div className="grid sm:grid-cols-3 gap-4">
                   {[
-                    { title: 'Secure Storage', desc: 'Private keys stored in ESP32-S3 secure flash' },
-                    { title: 'Physical Auth', desc: 'Confirm transactions with button press' },
-                    { title: 'Air-Gapped Option', desc: 'Sign offline, broadcast via phone' },
+                    { title: 'Secure Storage', desc: 'AES-256-CBC encrypted keys in ESP32 NVS flash' },
+                    { title: 'Physical Auth', desc: 'Gesture/button confirm + 6-digit PIN (PBKDF2 10K)' },
+                    { title: 'BLE Signing', desc: 'secp256k1 ECDSA — 65-byte signatures (r+s+v)' },
                   ].map((feature) => (
                     <div key={feature.title} className="p-3 bg-black/30 border border-white/10">
                       <p className="text-yellow-400 font-bold text-sm mb-1">{feature.title}</p>
@@ -269,12 +271,12 @@ export default function RewardsPage() {
         </div>
       </section>
 
-      {/* Architecture */}
+      {/* System Architecture */}
       <section className="py-20 px-6 bg-white/[0.02]">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-black text-white mb-8">System Architecture</h2>
           
-          <div className="p-6 bg-white/5 border border-white/10 overflow-x-auto">
+          <div className="p-6 bg-white/5 border border-white/10 overflow-x-auto mb-8">
             <div className="flex items-center justify-between min-w-[600px] gap-4">
               {[
                 { label: 'Watch', icon: '⌚', desc: 'Track workout' },
@@ -302,22 +304,115 @@ export default function RewardsPage() {
               ))}
             </div>
           </div>
+
+          {/* Token Flow */}
+          <div className="p-6 bg-black/50 border border-yellow-500/30 rounded-lg font-mono text-sm">
+            <p className="text-yellow-400 font-bold mb-3">Off-Chain / On-Chain Token Flow (Dual Economy)</p>
+            <div className="space-y-1 text-gray-400 text-xs">
+              <p>[Workout / Quest] → Off-chain AERO (Firestore)</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;↓ Withdraw request</p>
+              <p>[Cloud Function] → Burn 5% fee on-chain → Transfer net to wallet</p>
+              <p>&nbsp;&nbsp;&nbsp;&nbsp;↓ Hardware wallet signs TX</p>
+              <p>[On-Chain AERO] ← ERC-20 transfer confirmed</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Burn Mechanics */}
+      <section className="py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-black text-white mb-4">Burn Mechanics (Deflationary)</h2>
+          <p className="text-gray-400 mb-8">
+            AERO is deflationary — tokens are permanently burned on-chain via the smart contract&apos;s burn() function.
+          </p>
+          
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="p-6 bg-white/5 border border-red-500/30">
+              <div className="flex items-center gap-2 mb-4">
+                <h3 className="text-xl font-bold text-red-400">Withdrawal Burn</h3>
+                <span className="px-2 py-0.5 bg-green-500/20 text-green-400 text-xs rounded">Live</span>
+              </div>
+              <div className="space-y-3 text-sm">
+                <div className="p-3 bg-black/30 border border-white/5">
+                  <p className="text-white font-bold text-xs mb-1">Rate</p>
+                  <p className="text-gray-400 text-xs">5% of every withdrawal is burned on-chain</p>
+                </div>
+                <div className="p-3 bg-black/30 border border-white/5">
+                  <p className="text-white font-bold text-xs mb-1">Example</p>
+                  <p className="text-gray-400 text-xs">Withdraw 1000 AERO → 50 burned, 950 sent to wallet</p>
+                </div>
+                <div className="p-3 bg-black/30 border border-white/5">
+                  <p className="text-white font-bold text-xs mb-1">Rules</p>
+                  <p className="text-gray-400 text-xs">Minimum withdrawal: 100 AERO | 24h cooldown</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-6 bg-white/5 border border-yellow-500/30">
+              <div className="flex items-center gap-2 mb-4">
+                <h3 className="text-xl font-bold text-yellow-400">In-Game Purchase Burns</h3>
+                <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-xs rounded">Planned</span>
+              </div>
+              <div className="space-y-2 text-sm">
+                {[
+                  { category: 'Consumables / Common Items', rate: '5%' },
+                  { category: 'Rare Items', rate: '7%' },
+                  { category: 'Epic Items', rate: '8%' },
+                  { category: 'Legendary Items', rate: '10%' },
+                  { category: 'Stamina Refill', rate: '10%' },
+                  { category: 'Cosmetics', rate: '3%' },
+                ].map((item) => (
+                  <div key={item.category} className="flex justify-between p-2 bg-black/30">
+                    <span className="text-gray-400 text-xs">{item.category}</span>
+                    <span className="text-red-400 font-bold text-xs">{item.rate}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Token Utility */}
+      <section className="py-20 px-6 bg-white/[0.02]">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-black text-white mb-8">Token Utility</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { title: 'In-Game Purchases', desc: 'Buy equipment and items in Dungeon Raid' },
+              { title: 'Stamina Refill', desc: 'Restore dungeon stamina for more runs' },
+              { title: 'Skill Unlocks', desc: 'Unlock new combat abilities' },
+              { title: 'Cosmetics', desc: 'Purchase character skins and effects' },
+            ].map((item, i) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 + i * 0.1 }}
+                className="p-6 bg-white/5 border border-white/10"
+              >
+                <h3 className="text-lg font-bold text-yellow-400 mb-2">{item.title}</h3>
+                <p className="text-gray-500 text-sm">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Status */}
-      <section className="py-12 px-6 bg-yellow-500/10 border-y border-yellow-500/20">
+      <section className="py-12 px-6 bg-green-500/10 border-y border-green-500/20">
         <div className="max-w-6xl mx-auto flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-4">
-            <Clock className="w-8 h-8 text-yellow-500" />
+            <Trophy className="w-8 h-8 text-green-500" />
             <div>
-              <p className="text-white font-bold">Coming Soon</p>
-              <p className="text-gray-400 text-sm">Web3 rewards system is planned for future release</p>
+              <p className="text-white font-bold">Sepolia Testnet Deployed</p>
+              <p className="text-gray-400 text-sm">AERO token contract live with 5% withdrawal burn</p>
             </div>
           </div>
           <div className="flex items-center gap-2 text-gray-400 text-sm">
             <LinkIcon className="w-4 h-4" />
-            <span>Testnet deployment in progress</span>
+            <span className="font-mono text-xs">0x4AEBa9CDc6B49...6F98E</span>
           </div>
         </div>
       </section>

@@ -13,9 +13,7 @@ export function FooterContent() {
     <div className="flex flex-col items-center text-center">
       {/* Logo */}
       <div className="flex items-center gap-2 mb-8">
-        <div className="w-8 h-8 bg-white flex items-center justify-center clip-path-polygon">
-          <span className="text-black font-black text-xs italic">A</span>
-        </div>
+        <img src="/logo.svg" alt="Aerovit" className="w-8 h-7 object-contain" />
         <span className="text-xl font-black tracking-tighter uppercase italic text-white">
           Aerovit
         </span>

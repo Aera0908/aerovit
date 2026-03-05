@@ -185,15 +185,15 @@ export default function HardwarePage() {
                 icon: Vibrate,
                 title: 'Haptic Feedback',
                 desc: 'Vibration patterns for rep validation, achievements, and workout cues without looking at screen.',
-                status: 'Planned',
-                statusColor: 'text-yellow-400 bg-yellow-500/10',
+                status: 'Implemented',
+                statusColor: 'text-green-400 bg-green-500/10',
               },
               {
                 icon: Activity,
                 title: 'Activity Detection',
-                desc: 'Automatically detect activity type from motion patterns — idle, slow walk, walk, running.',
-                status: 'Planned',
-                statusColor: 'text-yellow-400 bg-yellow-500/10',
+                desc: 'Cadence-based classification using Tudor-Locke research — idle, slow walk, normal walk, brisk walk, jogging, running with MET values.',
+                status: 'Implemented',
+                statusColor: 'text-green-400 bg-green-500/10',
               },
               {
                 icon: Battery,
@@ -239,18 +239,29 @@ export default function HardwarePage() {
           
           <div className="grid md:grid-cols-2 gap-8">
             <div className="p-6 bg-white/5 border border-[#00eeff]/30">
-              <h3 className="text-xl font-bold text-[#00eeff] mb-6">Data Characteristics</h3>
-              <div className="space-y-3 font-mono text-sm">
+              <h3 className="text-xl font-bold text-[#00eeff] mb-4">Service & Packet Format</h3>
+              <div className="space-y-2 font-mono text-sm mb-4">
+                <div className="p-2 bg-black/30">
+                  <span className="text-gray-400">Service UUID: </span>
+                  <span className="text-[#00eeff] text-xs break-all">ae0v1t00-1234-5678-abcd-aerovitwatch</span>
+                </div>
+              </div>
+              <h4 className="text-sm font-bold text-[#00eeff] mb-3">28-Byte Biometric Packet</h4>
+              <div className="space-y-2 font-mono text-sm">
                 {[
-                  { char: 'Heart Rate', uuid: '0x2A37', unit: 'BPM' },
-                  { char: 'SpO2', uuid: '0x2A5F', unit: '%' },
-                  { char: 'Accelerometer', uuid: 'Custom', unit: 'g' },
-                  { char: 'Gyroscope', uuid: 'Custom', unit: 'dps' },
-                  { char: 'Temperature', uuid: '0x2A6E', unit: '°C' },
+                  { offset: '0', type: 'uint8', field: 'SpO2 (0-100%)' },
+                  { offset: '1', type: 'uint8', field: 'Heart Rate (BPM)' },
+                  { offset: '2', type: 'uint8', field: 'Battery (%)' },
+                  { offset: '3', type: 'uint8', field: 'Status' },
+                  { offset: '12', type: 'uint8', field: 'Activity Type' },
+                  { offset: '13', type: 'uint8', field: 'Cadence (SPM)' },
+                  { offset: '14-15', type: 'uint16', field: 'Calories' },
+                  { offset: '16-19', type: 'uint32', field: 'Steps Today' },
                 ].map((c) => (
-                  <div key={c.char} className="flex justify-between p-2 bg-black/30">
-                    <span className="text-gray-400">{c.char}</span>
-                    <span className="text-[#00eeff]">{c.uuid} ({c.unit})</span>
+                  <div key={c.offset} className="flex justify-between p-2 bg-black/30">
+                    <span className="text-gray-500 w-16">[{c.offset}]</span>
+                    <span className="text-gray-400 w-16">{c.type}</span>
+                    <span className="text-[#00eeff] flex-1 text-right">{c.field}</span>
                   </div>
                 ))}
               </div>
@@ -279,6 +290,156 @@ export default function HardwarePage() {
         </div>
       </section>
 
+      {/* Activity Classification */}
+      <section className="py-20 px-6 bg-white/[0.02] border-y border-white/10">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-black text-white mb-4">Activity Classification</h2>
+          <p className="text-gray-400 mb-8">Cadence-based classification using Tudor-Locke et al. (2018) walking cadence research.</p>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="text-[#00eeff] border-b border-[#00eeff]/20">
+                <tr>
+                  <th className="py-3 px-4">Activity</th>
+                  <th className="py-3 px-4">Cadence (SPM)</th>
+                  <th className="py-3 px-4">MET Value</th>
+                </tr>
+              </thead>
+              <tbody className="text-gray-400">
+                {[
+                  { activity: 'Idle/Stationary', cadence: '0 - 14', met: '1.3' },
+                  { activity: 'Slow Walk', cadence: '15 - 79', met: '2.8' },
+                  { activity: 'Normal Walk', cadence: '80 - 99', met: '3.5' },
+                  { activity: 'Brisk Walk', cadence: '100 - 119', met: '4.3' },
+                  { activity: 'Jogging', cadence: '120 - 149', met: '7.0' },
+                  { activity: 'Running', cadence: '150+', met: '9.8' },
+                ].map((row) => (
+                  <tr key={row.activity} className="border-b border-white/5">
+                    <td className="py-3 px-4 text-white font-medium">{row.activity}</td>
+                    <td className="py-3 px-4">{row.cadence}</td>
+                    <td className="py-3 px-4 text-[#00eeff]">{row.met}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-8 p-6 bg-black/50 border border-[#00eeff]/30 rounded-lg font-mono">
+            <p className="text-gray-500 text-sm mb-3">// Calorie Estimation (Ainsworth Compendium 2011)</p>
+            <p className="text-[#00eeff] text-sm leading-relaxed">
+              Calories/min = MET &times; Weight(kg) &times; 3.5 / 200
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Hardware Wallet Details */}
+      <section className="py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-black text-white mb-4">Hardware Wallet Architecture</h2>
+          <p className="text-gray-400 mb-8">ESP32-S3 acts as a hardware crypto wallet &mdash; private keys never leave the device.</p>
+          
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
+            <div className="p-6 bg-white/5 border border-yellow-500/30">
+              <h3 className="text-xl font-bold text-yellow-400 mb-4">Key Management</h3>
+              <div className="space-y-3 text-sm">
+                {[
+                  { label: 'Key Generation', value: 'BIP-39 mnemonic → BIP-32 seed → secp256k1' },
+                  { label: 'Address', value: 'Public key → Keccak-256 → last 20 bytes' },
+                  { label: 'Storage', value: 'AES-256-CBC encrypted in ESP32 NVS flash' },
+                  { label: 'PIN Protection', value: 'PBKDF2 (10K iterations), 5-attempt lockout' },
+                  { label: 'Signing', value: 'Decrypt key in RAM → sign → immediately wipe' },
+                ].map((item) => (
+                  <div key={item.label} className="p-3 bg-black/30 border border-white/5">
+                    <p className="text-yellow-400 font-bold text-xs mb-1">{item.label}</p>
+                    <p className="text-gray-400 text-xs">{item.value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-6 bg-white/5 border border-white/10">
+              <h3 className="text-xl font-bold text-white mb-4">Crypto Primitives</h3>
+              <div className="space-y-3 text-sm">
+                {[
+                  { algo: 'Keccak-256', usage: 'ETH address derivation' },
+                  { algo: 'secp256k1 ECDSA', usage: 'Transaction signing (mbedTLS)' },
+                  { algo: 'AES-256-CBC', usage: 'Private key encryption (PKCS7)' },
+                  { algo: 'PBKDF2-HMAC-SHA256', usage: 'PIN → encryption key' },
+                  { algo: 'PBKDF2-HMAC-SHA512', usage: 'Mnemonic → seed' },
+                  { algo: 'HMAC-SHA512', usage: 'BIP-32 master key derivation' },
+                ].map((item) => (
+                  <div key={item.algo} className="flex justify-between p-3 bg-black/30 border border-white/5">
+                    <span className="text-white font-medium text-xs">{item.algo}</span>
+                    <span className="text-gray-500 text-xs">{item.usage}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* BLE Wallet Protocol */}
+          <h3 className="text-2xl font-bold text-white mb-6">BLE Wallet Protocol</h3>
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
+            <div className="p-6 bg-white/5 border border-[#00eeff]/30">
+              <h4 className="text-lg font-bold text-[#00eeff] mb-4">App → Watch Commands</h4>
+              <div className="space-y-2 font-mono text-sm">
+                {[
+                  { opcode: '0x01', cmd: 'CREATE_WALLET', payload: '6-byte PIN' },
+                  { opcode: '0x02', cmd: 'UNLOCK_WALLET', payload: '6-byte PIN' },
+                  { opcode: '0x03', cmd: 'LOCK_WALLET', payload: 'none' },
+                  { opcode: '0x04', cmd: 'GET_ADDRESS', payload: 'none' },
+                  { opcode: '0x05', cmd: 'SIGN_TX', payload: '32-byte TX hash' },
+                  { opcode: '0x06', cmd: 'GET_STATUS', payload: 'none' },
+                ].map((c) => (
+                  <div key={c.opcode} className="flex items-center gap-3 p-2 bg-black/30">
+                    <span className="text-yellow-400 w-12">{c.opcode}</span>
+                    <span className="text-white flex-1">{c.cmd}</span>
+                    <span className="text-gray-500 text-xs">{c.payload}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div className="p-6 bg-white/5 border border-white/10">
+              <h4 className="text-lg font-bold text-white mb-4">Watch → App Responses</h4>
+              <div className="space-y-2 font-mono text-sm">
+                {[
+                  { opcode: '0x81', resp: 'CREATED', payload: '20-byte addr + seed' },
+                  { opcode: '0x82', resp: 'UNLOCKED', payload: '1-byte flag' },
+                  { opcode: '0x83', resp: 'ADDRESS', payload: '42-byte hex (0x)' },
+                  { opcode: '0x84', resp: 'SIGNATURE', payload: '65-byte (r+s+v)' },
+                  { opcode: '0x85', resp: 'STATUS', payload: 'wallet_status_t' },
+                  { opcode: '0x86', resp: 'SIGN_REQUEST', payload: 'Awaiting gesture' },
+                  { opcode: '0x87', resp: 'SIGN_REJECTED', payload: 'User rejected' },
+                ].map((c) => (
+                  <div key={c.opcode} className="flex items-center gap-3 p-2 bg-black/30">
+                    <span className="text-[#00eeff] w-12">{c.opcode}</span>
+                    <span className="text-white flex-1">{c.resp}</span>
+                    <span className="text-gray-500 text-xs">{c.payload}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Signing Flow */}
+          <div className="p-6 bg-black/50 border border-yellow-500/30 rounded-lg font-mono text-sm">
+            <p className="text-yellow-400 font-bold mb-3">Signing Flow</p>
+            <div className="space-y-1 text-gray-400 text-xs">
+              <p>1. App sends 32-byte TX hash via BLE</p>
+              <p>2. Watch displays sign request on screen</p>
+              <p>3. User approves via gesture or button</p>
+              <p>4. PIN-derived key decrypts private key in RAM</p>
+              <p>5. ECDSA sign (secp256k1) + compute recovery ID (v=27+recid)</p>
+              <p>6. Private key wiped from RAM immediately</p>
+              <p>7. 65-byte signature (r + s + v) sent back via BLE</p>
+              <p>8. tx_count incremented and persisted</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Status */}
       <section className="py-12 px-6 bg-green-500/10 border-y border-green-500/20">
         <div className="max-w-6xl mx-auto flex items-center justify-between flex-wrap gap-4">
@@ -286,12 +447,12 @@ export default function HardwarePage() {
             <CheckCircle className="w-8 h-8 text-green-500" />
             <div>
               <p className="text-white font-bold">Hardware Implemented</p>
-              <p className="text-gray-400 text-sm">Watch firmware and BLE communication functional</p>
+              <p className="text-gray-400 text-sm">Watch firmware, BLE communication, hardware wallet, and activity detection functional</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <Clock className="w-5 h-5 text-yellow-400" />
-            <span className="text-yellow-400 text-sm">Advanced features in development</span>
+            <span className="text-yellow-400 text-sm">OTA updates in development</span>
           </div>
         </div>
       </section>

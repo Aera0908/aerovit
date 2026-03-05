@@ -14,7 +14,7 @@ import {
 const DIFFERENTIATORS = [
   { icon: Camera, text: "Real-time pose detection with 33 landmarks", color: "text-cyan-400", implemented: true },
   { icon: Activity, text: "Custom smartwatch with biometric sensors", color: "text-green-400", implemented: true },
-  { icon: Sword, text: "Solo Leveling-style progression system", color: "text-purple-400", implemented: true },
+  { icon: Sword, text: "Hunter-rank progression system", color: "text-purple-400", implemented: true },
   { icon: Crosshair, text: "Automatic rep counting & form validation", color: "text-cyan-400", implemented: true },
   { icon: Trophy, text: "Web3 token rewards for workouts", color: "text-yellow-500", implemented: true },
   { icon: LinkIcon, text: "NFT achievement badges", color: "text-orange-400", implemented: false },

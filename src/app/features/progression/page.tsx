@@ -38,12 +38,12 @@ export default function ProgressionPage() {
                 <Sword className="w-8 h-8 text-purple-400" />
               </div>
               <div>
-                <p className="text-purple-400 text-sm font-mono uppercase tracking-wider">Solo Leveling Inspired</p>
+                <p className="text-purple-400 text-sm font-mono uppercase tracking-wider">Hunter Rank System</p>
                 <h1 className="text-4xl md:text-5xl font-black text-white">Rank Progression</h1>
               </div>
             </div>
             <p className="text-xl text-gray-400 max-w-3xl leading-relaxed">
-              Inspired by Solo Leveling&apos;s hunter ranking system. Level up through workouts, 
+              RPG-style hunter ranking system. Level up through workouts, 
               climb the ranks from E-Rank to National Level, and become the strongest hunter.
             </p>
           </motion.div>

@@ -64,7 +64,7 @@ export const FEATURES = {
     { icon: "Crosshair", text: "Motion-based form coaching (IMU + Vision)" },
     { icon: "Activity", text: "Multi-modal biometric fusion (6+ sensors)" },
     { icon: "Link", text: "Decentralized fitness tracking (blockchain)" },
-    { icon: "Sword", text: "Solo Leveling-style progression" },
+    { icon: "Sword", text: "Hunter-rank progression system" },
     { icon: "BrainCircuit", text: "Adaptive RL coaching that learns from you" },
   ]
 };
@@ -73,6 +73,7 @@ export const NAV_LINKS = [
   { href: "/features/pose-detection", label: "Pose Detection" },
   { href: "/features/progression", label: "Progression" },
   { href: "/features/hardware", label: "Hardware" },
+  { href: "/features/dungeon-raid", label: "Dungeon Raid" },
   { href: "/features/rewards", label: "Rewards" },
   { href: "/dev", label: "Developers" },
 ];

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { NAV_LINKS } from '@/lib/constants';
 
 export function Navbar() {
@@ -24,10 +25,8 @@ export function Navbar() {
         }`}
       >
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-cyan-500 flex items-center justify-center clip-path-polygon">
-            <span className="text-black font-black text-xl italic">A</span>
-          </div>
+        <Link href="/" className="flex items-center gap-2">
+          <Image src="/logo.svg" alt="Aerovit" width={40} height={36} className="w-10 h-9 object-contain" priority />
           <span className="text-2xl font-black tracking-tighter uppercase italic text-white">
             Aerovit
           </span>

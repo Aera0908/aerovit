@@ -23,7 +23,7 @@ export function GamificationContent() {
         <div className="flex items-center justify-center gap-3 mb-4">
           <Sword className="text-purple-400 w-6 h-6" />
           <h2 className="text-xs font-mono text-purple-400 uppercase tracking-[0.4em]">
-            Solo Leveling Inspired
+            Hunter Rank System
           </h2>
         </div>
         <h3 className="text-4xl md:text-5xl font-black italic uppercase">

@@ -534,7 +534,7 @@ function GamificationPanel() {
   return (
     <PanelFrame id="03" title="Rank System">
       <p className="text-sm text-gray-300 leading-relaxed mb-3">
-        Solo Leveling-inspired progression. Earn XP, level up, and climb the ranks.
+        Hunter-rank progression. Earn XP, level up, and climb the ranks.
       </p>
       <div className="flex flex-wrap gap-2 mb-3">
         {[
@@ -811,10 +811,11 @@ function SummarySection() {
             <h3 className="text-lg font-bold text-[#00eeff] mb-3">Custom Smartwatch</h3>
             <ul className="space-y-2 text-sm text-gray-400">
               <li>• 1.69&quot; touch LCD display</li>
-              <li>• Workout sync via BLE</li>
-              <li>• Live stats (HR, reps)</li>
-              <li>• Quest notifications</li>
-              <li>• Achievement badges</li>
+              <li>• Workout sync via BLE (28-byte packets)</li>
+              <li>• Live stats (HR, SpO2, steps)</li>
+              <li>• Activity detection (Tudor-Locke)</li>
+              <li>• Haptic feedback patterns</li>
+              <li>• Hardware wallet (secp256k1)</li>
             </ul>
             <div className="mt-4 pt-4 border-t border-white/10">
               <span className="text-xs text-green-400 uppercase">✓ Implemented</span>
@@ -824,7 +825,7 @@ function SummarySection() {
           {/* Gamification */}
           <div className="p-6 bg-white/5 border border-purple-500/20 hover:border-purple-500/40 transition-colors">
             <Sword className="w-8 h-8 text-purple-400 mb-4" />
-            <h3 className="text-lg font-bold text-purple-400 mb-3">Solo Leveling System</h3>
+            <h3 className="text-lg font-bold text-purple-400 mb-3">Hunter Rank System</h3>
             <ul className="space-y-2 text-sm text-gray-400">
               <li>• Hunter rank progression (E → S)</li>
               <li>• XP from workouts & form</li>
@@ -845,11 +846,12 @@ function SummarySection() {
             <Trophy className="w-8 h-8 text-yellow-500 mb-4" />
             <h3 className="text-lg font-bold text-yellow-500 mb-3">Web3 Rewards</h3>
             <ul className="space-y-2 text-sm text-gray-400">
-              <li>• AERO Token (ERC-20)</li>
+              <li>• AERO Token (ERC-20, Sepolia)</li>
+              <li>• 100M max supply, deflationary</li>
+              <li>• 5% withdrawal burn (live)</li>
+              <li>• Hardware wallet on ESP32 watch</li>
               <li>• Achievement NFTs (ERC-721)</li>
-              <li>• In-game Aero coin → AERO token</li>
-              <li>• MetaMask integration</li>
-              <li>• Sepolia testnet deployment</li>
+              <li>• Dungeon Raid token rewards</li>
             </ul>
             <div className="mt-4 pt-4 border-t border-white/10">
               <span className="text-xs text-green-400 uppercase">✓ Implemented</span>
@@ -869,8 +871,10 @@ function SummarySection() {
             {[
               { t: 'Social leaderboards, friends & compare hunters', s: 'Implemented' },
               { t: 'Web3 rewards (Aero coin, AERO token)', s: 'Implemented' },
+              { t: 'Haptic feedback patterns', s: 'Implemented' },
+              { t: 'Activity detection (cadence-based)', s: 'Implemented' },
+              { t: 'Hardware wallet (on-device signing)', s: 'Implemented' },
               { t: 'Gesture controls (shake, tap, rotate)', s: 'Planned' },
-              { t: 'Haptic feedback patterns', s: 'Planned' },
               { t: 'OTA firmware updates', s: 'Planned' },
               { t: 'Social challenges & referrals', s: 'Planned' },
             ].map((f) => (
@@ -950,7 +954,7 @@ function SummarySection() {
           </div>
           <div>
             <p className="text-gray-400 font-medium mb-2">Inspired By</p>
-            <p>Solo Leveling (Manhwa)</p>
+            <p>RPG Progression Systems</p>
             <p>Gamified Fitness Apps</p>
           </div>
           <div>

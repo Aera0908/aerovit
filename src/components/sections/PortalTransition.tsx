@@ -75,7 +75,7 @@ export function PortalTransitionContent() {
         A gamified fitness platform combining{' '}
         <span className="text-cyan-400">real-time pose detection</span>,{' '}
         <span className="text-purple-400">custom wearable technology</span>, and{' '}
-        <span className="text-yellow-400">Solo Leveling-inspired progression</span>.
+        <span className="text-yellow-400">hunter-rank progression</span>.
       </motion.p>
     </div>
   );
