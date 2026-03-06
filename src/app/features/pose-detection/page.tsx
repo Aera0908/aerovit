@@ -1,7 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Camera, CheckCircle, Activity, Eye, Cpu, ArrowLeft } from 'lucide-react';
+import { Camera, CheckCircle, Activity, Eye, Cpu, ArrowLeft, Brain, Layers, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { Navbar } from '@/components/layout';
 
@@ -36,6 +37,16 @@ export default function PoseDetectionPage() {
               Real-time skeletal tracking powered by MediaPipe BlazePose. Track 33 body landmarks, 
               validate exercise form, and count reps automatically with sub-frame precision.
             </p>
+          </motion.div>
+
+          {/* BlazePose Demo Media */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+            className="mt-12"
+          >
+            <BlazePoseDemo />
           </motion.div>
         </div>
       </section>
@@ -152,44 +163,79 @@ export default function PoseDetectionPage() {
         </div>
       </section>
 
-      {/* Technical Details */}
+      {/* Technical Details — BlazePose Deep Dive */}
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-black text-white mb-12">Technical Implementation</h2>
-          
+          <h2 className="text-3xl font-black text-white mb-4">Technical Implementation</h2>
+          <p className="text-gray-400 mb-12 max-w-3xl">
+            A deep look at the ML model, inference pipeline, and signal processing that power Aerovit&apos;s real-time exercise tracking.
+          </p>
+
+          {/* BlazePose Architecture */}
+          <div className="p-8 bg-white/5 border border-white/10 rounded-lg mb-12">
+            <div className="flex items-center gap-3 mb-6">
+              <Brain className="w-8 h-8 text-[#00eeff]" />
+              <h3 className="text-2xl font-bold text-white">MediaPipe BlazePose</h3>
+            </div>
+            <div className="grid md:grid-cols-2 gap-10">
+              <div>
+                <p className="text-gray-300 leading-relaxed mb-4">
+                  BlazePose is a lightweight, on-device pose estimation model developed by Google Research.
+                  It uses a two-step detector-tracker architecture: a fast <span className="text-[#00eeff]">person detector</span> localises
+                  the body in the first frame, then a <span className="text-[#00eeff]">landmark regression network</span> tracks
+                  33 keypoints across subsequent frames without re-running detection — keeping latency under 16 ms on modern mobile GPUs.
+                </p>
+                <p className="text-gray-300 leading-relaxed mb-4">
+                  The model outputs <span className="text-[#00eeff]">3D coordinates (x, y, z)</span> plus a per-landmark
+                  visibility score, enabling depth-aware angle calculations even from a single monocular camera.
+                  BlazePose Heavy (the variant Aerovit uses) maximises landmark accuracy at the cost of slightly
+                  higher compute, which is an acceptable trade-off on modern phones.
+                </p>
+                <p className="text-gray-300 leading-relaxed">
+                  Because inference runs entirely on-device via GPU delegates (TFLite on Android, CoreML on iOS),
+                  no camera frames ever leave the user&apos;s phone — ensuring full privacy and zero-latency operation
+                  regardless of network conditions.
+                </p>
+              </div>
+              <div className="space-y-5">
+                <h4 className="text-sm font-mono text-[#00eeff]/70 uppercase tracking-wider">Model Specifications</h4>
+                <ul className="space-y-3">
+                  {[
+                    { label: '33 body landmarks per frame', detail: 'Full-body skeleton including face, hands, and feet' },
+                    { label: '3D coordinates (x, y, z) + visibility', detail: 'Depth estimation from monocular camera input' },
+                    { label: 'Two-step detector → tracker pipeline', detail: 'Detect once, track continuously for speed' },
+                    { label: 'BlazePose Heavy variant', detail: 'Higher accuracy model optimised for fitness use' },
+                    { label: 'On-device GPU-accelerated inference', detail: 'TFLite GPU delegate / CoreML — no cloud needed' },
+                    { label: 'Front & back camera support', detail: 'Automatic coordinate mirroring for selfie mode' },
+                  ].map((item) => (
+                    <li key={item.label} className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-gray-200 text-sm font-medium">{item.label}</p>
+                        <p className="text-gray-500 text-xs">{item.detail}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Processing Pipeline + Signal Processing */}
           <div className="grid md:grid-cols-2 gap-12">
             <div>
-              <h3 className="text-xl font-bold text-[#00eeff] mb-4">MediaPipe BlazePose</h3>
-              <p className="text-gray-400 mb-6">
-                We use Google&apos;s MediaPipe BlazePose model for real-time pose estimation. 
-                The model runs on-device for privacy and low latency.
-              </p>
-              <ul className="space-y-3">
-                {[
-                  '33 body landmarks per frame',
-                  '3D coordinates (x, y, z) + visibility',
-                  'Works with front and back camera',
-                  'Optimized for mobile devices',
-                  'No cloud processing required',
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-gray-300">
-                    <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="text-xl font-bold text-[#00eeff] mb-4">Processing Pipeline</h3>
+              <div className="flex items-center gap-3 mb-6">
+                <Layers className="w-6 h-6 text-[#00eeff]" />
+                <h3 className="text-xl font-bold text-[#00eeff]">Processing Pipeline</h3>
+              </div>
               <div className="space-y-4">
                 {[
-                  { step: '1', title: 'Frame Capture', desc: 'Camera captures video at 30+ FPS' },
-                  { step: '2', title: 'Pose Estimation', desc: 'BlazePose extracts 33 landmarks' },
-                  { step: '3', title: 'Filtering', desc: 'One Euro Filter smooths coordinates' },
-                  { step: '4', title: 'Angle Calculation', desc: 'Joint angles computed in real-time' },
-                  { step: '5', title: 'State Machine', desc: 'Rep counting and form validation' },
-                  { step: '6', title: 'UI Feedback', desc: 'Visual overlays and audio cues' },
+                  { step: '1', title: 'Frame Capture', desc: 'Camera streams NV21/BGRA frames at 30 FPS via CameraX / AVFoundation' },
+                  { step: '2', title: 'Pose Estimation', desc: 'BlazePose Heavy extracts 33 landmarks with 3D coordinates per frame' },
+                  { step: '3', title: 'EMA Smoothing', desc: 'Exponential moving average (α = 0.45) stabilises landmark positions across frames' },
+                  { step: '4', title: 'Angle Calculation', desc: 'Joint angles computed via 3-point inverse tangent on key landmark triplets' },
+                  { step: '5', title: 'State Machine', desc: 'Finite state machine detects exercise phases (up ↔ down) and increments reps' },
+                  { step: '6', title: 'UI Feedback', desc: 'Skeleton overlay, colour-coded angles, audio cues, and rep counter update' },
                 ].map((item) => (
                   <div key={item.step} className="flex gap-4">
                     <div className="w-8 h-8 bg-[#00eeff]/20 border border-[#00eeff]/40 rounded flex items-center justify-center flex-shrink-0">
@@ -201,6 +247,40 @@ export default function PoseDetectionPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <Zap className="w-6 h-6 text-[#00eeff]" />
+                <h3 className="text-xl font-bold text-[#00eeff]">Signal Processing</h3>
+              </div>
+              <div className="space-y-6">
+                <div className="p-5 bg-white/5 border border-white/10 rounded">
+                  <h4 className="text-white font-semibold mb-2">EMA Landmark Smoother</h4>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    Raw ML Kit landmarks jitter frame-to-frame. We apply an exponential moving average
+                    (α&nbsp;=&nbsp;0.45) independently to each landmark&apos;s x and y coordinates, producing
+                    a visually smooth skeleton while keeping responsiveness high enough for fast exercises.
+                  </p>
+                </div>
+                <div className="p-5 bg-white/5 border border-white/10 rounded">
+                  <h4 className="text-white font-semibold mb-2">Frame Throttling</h4>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    The camera streams at 30 FPS, but running BlazePose Heavy on every frame is unnecessary.
+                    A frame throttle limits inference to ~15 FPS, halving GPU load with no perceptible
+                    difference in tracking quality — extending battery life during long workout sessions.
+                  </p>
+                </div>
+                <div className="p-5 bg-white/5 border border-white/10 rounded">
+                  <h4 className="text-white font-semibold mb-2">BoxFit.cover Coordinate Mapping</h4>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    ML Kit returns landmarks in the raw camera sensor coordinate space. We compute the
+                    correct scale factor and crop offset for the BoxFit.cover display mode, accounting
+                    for sensor rotation and front-camera mirroring, so the skeleton aligns pixel-perfectly
+                    with the user&apos;s body on screen.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -225,6 +305,31 @@ export default function PoseDetectionPage() {
           </Link>
         </div>
       </section>
+    </div>
+  );
+}
+
+/* ── BlazePose Demo Media ─────────────────────────────── */
+function BlazePoseDemo() {
+  const [err, setErr] = useState(false);
+  const src = 'https://1.bp.blogspot.com/-Q64KtZLWOT8/XzVxdkZDMgI/AAAAAAAAGYk/qj7mLsOL3AMcDkusMgYDGrSqauRAljR9gCLcBGAsYHQ/s924/image8.gif';
+  return (
+    <div className="rounded-lg overflow-hidden bg-black border border-[#00eeff]/20 inline-block max-w-full">
+      {!err ? (
+        <img
+          src={src}
+          alt="BlazePose real-time exercise tracking — squats and push-ups demo"
+          className="block max-w-full h-auto"
+          onError={() => setErr(true)}
+        />
+      ) : (
+        <div className="w-80 h-48 flex items-center justify-center bg-gradient-to-b from-[#00eeff]/10 to-transparent">
+          <span className="text-[#00eeff]/40 text-xs uppercase tracking-wider">BlazePose Demo</span>
+        </div>
+      )}
+      <p className="px-4 py-2 text-[10px] text-gray-500">
+        Source: <a href="https://research.google/blog/on-device-real-time-body-pose-tracking-with-mediapipe-blazepose/" target="_blank" rel="noopener noreferrer" className="text-[#00eeff]/50 hover:text-[#00eeff] transition-colors">Google Research — BlazePose</a>
+      </p>
     </div>
   );
 }
