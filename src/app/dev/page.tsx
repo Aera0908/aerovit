@@ -200,7 +200,6 @@ const DEVELOPERS: Developer[] = [
   },
   {
     name: 'Yonaka', role: 'Business', title: 'Business Development',
-    hidden: true,
     subject: '/assets/dev-team/yonaka-avatar-half.png',
     layout: { right: 'right-[5%]', rightMd: 'md:right-[-4%]', bottom: 'bottom-10', width: 'w-[250px]', widthMd: 'md:w-[350px]', height: '140%' },
     stats: [
@@ -219,7 +218,6 @@ const DEVELOPERS: Developer[] = [
   },
   {
     name: 'Hinode', role: 'Business', title: 'Operations & Planning',
-    hidden: true,
     subject: '/assets/dev-team/hinode-avatar-half.png',
     layout: { right: 'right-[5%]', rightMd: 'md:right-[-10%]', bottom: 'bottom-[-20]', width: 'w-[350px]', widthMd: 'md:w-[490px]', height: '140%' },
     stats: [

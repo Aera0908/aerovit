@@ -926,8 +926,8 @@ function SummarySection() {
               { name: 'Aera', discord: 'aeradynamics.', twitter: 'aera0908', github: 'aera0908', avatar: '/assets/dev-team/Aera-2.jpg' },
               { name: 'Crispychili', discord: 'cuppateaa_', twitter: 'cuppateaa_', github: 'crispychili', avatar: '/assets/dev-team/Crispychili.jpg' },
               { name: 'Supremo', discord: 'supremo_cp26', twitter: 'supremo_cp26', github: 'christiannn26', avatar: '/assets/dev-team/supremo-avatar.png', hidden: true },
-              { name: 'Yonaka', discord: 'ynk_web3', twitter: 'ynk2528', github: 'yonaka-png', avatar: '/assets/dev-team/Yonaka.jpg', hidden: true },
-              { name: 'Hinode', discord: 'hinode_web3', twitter: 'hinode_web3', github: '', avatar: '/assets/dev-team/Hinode.jpg', hidden: true },
+              { name: 'Yonaka', discord: 'ynk_web3', twitter: 'ynk2528', github: 'yonaka-png', avatar: '/assets/dev-team/Yonaka.jpg' },
+              { name: 'Hinode', discord: 'hinode_web3', twitter: 'hinode_web3', github: '', avatar: '/assets/dev-team/Hinode.jpg' },
             ]
               .filter((member) => !member.hidden)
               .map((member) => (
