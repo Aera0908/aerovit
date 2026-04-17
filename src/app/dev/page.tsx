@@ -137,6 +137,8 @@ interface Developer {
   directive: string;
   quote: string;
   socials: SocialLink[];
+  /** When true, kept in DEVELOPERS but omitted from carousel and dots. */
+  hidden?: boolean;
 }
 
 // Subject images for STANDALONE dev page only - from /dev/ folder
@@ -179,6 +181,7 @@ const DEVELOPERS: Developer[] = [
   },
   {
     name: 'Supremo', role: 'Data', title: 'Data Gathering Specialist',
+    hidden: true,
     subject: '/assets/dev-team/supremo-avatar-half.png',
     layout: { right: 'right-[5%]', rightMd: 'md:right-[-12%]', bottom: 'bottom-[-57]', width: 'w-[300px]', widthMd: 'md:w-[420px]', height: '140%' },
     stats: [
@@ -197,6 +200,7 @@ const DEVELOPERS: Developer[] = [
   },
   {
     name: 'Yonaka', role: 'Business', title: 'Business Development',
+    hidden: true,
     subject: '/assets/dev-team/yonaka-avatar-half.png',
     layout: { right: 'right-[5%]', rightMd: 'md:right-[-4%]', bottom: 'bottom-10', width: 'w-[250px]', widthMd: 'md:w-[350px]', height: '140%' },
     stats: [
@@ -215,6 +219,7 @@ const DEVELOPERS: Developer[] = [
   },
   {
     name: 'Hinode', role: 'Business', title: 'Operations & Planning',
+    hidden: true,
     subject: '/assets/dev-team/hinode-avatar-half.png',
     layout: { right: 'right-[5%]', rightMd: 'md:right-[-10%]', bottom: 'bottom-[-20]', width: 'w-[350px]', widthMd: 'md:w-[490px]', height: '140%' },
     stats: [
@@ -231,6 +236,8 @@ const DEVELOPERS: Developer[] = [
     ],
   },
 ];
+
+const VISIBLE_DEVELOPERS = DEVELOPERS.filter((d) => !d.hidden);
 
 function SubjectImage({ src, alt }: { src: string; alt: string }) {
   const [loaded, setLoaded] = useState(false);
@@ -314,8 +321,8 @@ export default function DevPage() {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
 
-  const dev = DEVELOPERS[index];
-  const theme = DEV_THEMES[index];
+  const dev = VISIBLE_DEVELOPERS[index];
+  const theme = DEV_THEMES[DEVELOPERS.indexOf(dev)];
 
   // Slide variants with direction support
   const slideVariants = {
@@ -326,11 +333,11 @@ export default function DevPage() {
 
   const goNext = () => {
     setDirection(1);
-    setIndex((i) => (i + 1) % DEVELOPERS.length);
+    setIndex((i) => (i + 1) % VISIBLE_DEVELOPERS.length);
   };
   const goPrev = () => {
     setDirection(-1);
-    setIndex((i) => (i - 1 + DEVELOPERS.length) % DEVELOPERS.length);
+    setIndex((i) => (i - 1 + VISIBLE_DEVELOPERS.length) % VISIBLE_DEVELOPERS.length);
   };
 
   return (
@@ -505,7 +512,7 @@ export default function DevPage() {
 
             {/* Dot indicators */}
             <div className="flex justify-center gap-2 mt-8">
-              {DEVELOPERS.map((d, i) => (
+              {VISIBLE_DEVELOPERS.map((d, i) => (
                 <button
                   key={d.name}
                   onClick={() => {
